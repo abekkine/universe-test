@@ -8,8 +8,8 @@ class GLDisplay {
 
     public:
         GLDisplay();
-        ~GLDisplay();
-        
+        virtual ~GLDisplay();
+
         void SetScreenSize( int width, int height );
         void SetWorldSize( double width, double height );
         bool Initialize();
@@ -66,4 +66,3 @@ class GLDisplay {
 
 
 #endif
-

@@ -1,12 +1,15 @@
-#include <Renderer.h>
+#include <UniverseRenderer.h>
 
-Renderer::Renderer()
+UniverseRenderer::UniverseRenderer()
 {
     // TODO
     m_quitCondition = false;
 }
 
-void Renderer::Render()
+UniverseRenderer::~UniverseRenderer()
+{}
+
+void UniverseRenderer::Render()
 {
     // TODO
     glColor3f( 1.0, 1.0, 1.0 );
@@ -18,12 +21,12 @@ void Renderer::Render()
     glEnd();
 }
 
-bool Renderer::GetQuitCondition()
+bool UniverseRenderer::GetQuitCondition()
 {
     return m_quitCondition;
 }
 
-void Renderer::UserKeys( int keycode, bool shift, bool ctrl )
+void UniverseRenderer::UserKeys( int keycode, bool shift, bool ctrl )
 {
     // In order to avoid warning messages when modifier keys are not being used.
     ctrl = ctrl;
@@ -31,7 +34,7 @@ void Renderer::UserKeys( int keycode, bool shift, bool ctrl )
 
     switch( keycode )
     {
-        case SDLK_UP: 
+        case SDLK_UP:
         case SDLK_DOWN:
         case SDLK_RIGHT:
         case SDLK_LEFT:
@@ -46,4 +49,3 @@ void Renderer::UserKeys( int keycode, bool shift, bool ctrl )
             break;
     }
 }
-

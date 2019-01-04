@@ -1,12 +1,13 @@
-#ifndef RENDERER_H
-#define RENDERER_H
+#ifndef UNIVERSE_RENDERER_H
+#define UNIVERSE_RENDERER_H
 
 #include <GLDisplay.h>
 
-class Renderer : public GLDisplay {
+class UniverseRenderer : public GLDisplay {
 
     public:
-        Renderer();
+        UniverseRenderer();
+        ~UniverseRenderer();
         void Render();
         void UserKeys( int keycode, bool shift, bool ctrl );
         bool GetQuitCondition();
@@ -15,5 +16,4 @@ class Renderer : public GLDisplay {
         bool m_quitCondition;
 };
 
-#endif
-
+#endif // UNIVERSE_RENDERER_H

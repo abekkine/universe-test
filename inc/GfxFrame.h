@@ -1,9 +1,9 @@
 #ifndef GFXFRAME_H
 #define GFXFRAME_H
 
-#include <Timer.h>
-#include <Config.h>
-#include <Renderer.h>
+class Timer;
+class Config;
+class UniverseRenderer;
 
 class GfxFrame {
     public:
@@ -18,7 +18,7 @@ class GfxFrame {
         // Variables.
         double m_timeStep;
         Config* m_config;
-        Renderer* m_display;
+        UniverseRenderer* m_display;
         bool m_quitCondition;
         unsigned int m_numTicks;
         unsigned int m_ticksPeriod;

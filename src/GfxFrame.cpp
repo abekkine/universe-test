@@ -1,5 +1,9 @@
 #include <GfxFrame.h>
 
+#include <Timer.h>
+#include <Config.h>
+#include <UniverseRenderer.h>
+
 GfxFrame::GfxFrame()
 {
     InitVars();
@@ -18,7 +22,7 @@ bool GfxFrame::Initialize( Config *config )
 
     m_config = config;
     m_timer = new Timer();
-    m_display = new Renderer();
+    m_display = new UniverseRenderer();
 
     // Read configuration file.
     m_config->Read();
