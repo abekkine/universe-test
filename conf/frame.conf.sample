@@ -1,0 +1,36 @@
+frame = 
+{
+    // General settings.
+    application = 
+    {
+        frequency = 0;
+        timestep = 0.5;
+    };
+
+    // Display configuration.
+    display = 
+    {
+        // Screen dimensions.
+        screen = 
+        {
+            width = 500;
+            height = 500;
+        };
+
+        // World coordinates.
+        world = 
+        {
+            width = 1.0;
+            height = 1.0;
+        };
+
+        // Background color. 
+        bg = 
+        {
+            red = 0.0;
+            green = 0.0;
+            blue = 0.0;
+        };
+    };
+};
+

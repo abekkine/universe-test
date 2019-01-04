@@ -1,0 +1,5 @@
+*.pyc
+inc/version.h
+.*.swp
+*.o
+*.conf
