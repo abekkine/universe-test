@@ -24,10 +24,11 @@ int main( int argc, char *argv[] )
     }
 
     frame = new GfxFrame();
-  
-    frame->Initialize( config );
 
-    frame->Run();
+    if (frame->Initialize( config )) {
+
+        frame->Run();
+    }
 
     return 0;
 }

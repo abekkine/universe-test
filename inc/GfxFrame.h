@@ -10,7 +10,7 @@ class GfxFrame {
         GfxFrame();
         ~GfxFrame();
 
-        void Initialize( Config *config );
+        bool Initialize( Config *config );
         void Run();
         void Update( double timestep );
 
@@ -29,4 +29,3 @@ class GfxFrame {
 };
 
 #endif
-

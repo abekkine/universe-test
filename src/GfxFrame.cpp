@@ -9,11 +9,11 @@ GfxFrame::~GfxFrame()
 {
 }
 
-void GfxFrame::Initialize( Config *config )
+bool GfxFrame::Initialize( Config *config )
 {
     if( config == NULL )
     {
-        return;
+        return false;
     }
 
     m_config = config;
@@ -27,7 +27,9 @@ void GfxFrame::Initialize( Config *config )
     m_display->SetScreenSize( m_config->screen_width, m_config->screen_height );
     m_display->SetWorldSize( m_config->world_width, m_config->world_height );
     m_display->SetBGColor( m_config->bg_red, m_config->bg_green, m_config->bg_blue );
-    m_display->Initialize();
+    if (!m_display->Initialize()) {
+        return false;
+    }
 
     // Configure application timer
     if( m_config->application_frequency > 0 )
@@ -42,7 +44,7 @@ void GfxFrame::Initialize( Config *config )
 
     m_timeStep = m_config->application_timestep;
 
-    // TODO
+    return true;
 }
 
 void GfxFrame::Run()
@@ -66,7 +68,7 @@ void GfxFrame::Run()
 void GfxFrame::Update( double timestep )
 {
     // TODO
-    timestep = timestep;
+    (void)timestep;
 }
 
 void GfxFrame::InitVars()

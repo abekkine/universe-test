@@ -1,5 +1,9 @@
+bin/
 *.pyc
 inc/version.h
 .*.swp
 *.o
 *.conf
+*.gch
+.sconsign.dblite
+
