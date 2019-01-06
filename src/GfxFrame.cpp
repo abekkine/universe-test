@@ -2,6 +2,7 @@
 
 #include <Timer.h>
 #include <Config.h>
+#include <Universe.h>
 #include <UniverseRenderer.h>
 
 GfxFrame::GfxFrame()
@@ -22,7 +23,9 @@ bool GfxFrame::Initialize( Config *config )
 
     m_config = config;
     m_timer = new Timer();
+    m_universe = new Universe();
     m_display = new UniverseRenderer();
+    m_display->SetUniverse(m_universe);
 
     // Read configuration file.
     m_config->Read();

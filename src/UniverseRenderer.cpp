@@ -1,24 +1,49 @@
 #include <UniverseRenderer.h>
+#include <Universe.h>
+
+#include <vector>
+#include <iostream>
 
 UniverseRenderer::UniverseRenderer()
 {
-    // TODO
     m_quitCondition = false;
+    m_universe = 0;
 }
 
 UniverseRenderer::~UniverseRenderer()
 {}
 
+void UniverseRenderer::SetUniverse(Universe * universe) {
+    m_universe = universe;
+}
+
 void UniverseRenderer::Render()
 {
-    // TODO
-    glColor3f( 1.0, 1.0, 1.0 );
-    glBegin( GL_QUADS );
-        glVertex2d( -0.1, -0.1 );
-        glVertex2d( -0.1, 0.1 );
-        glVertex2d( 0.1, 0.1 );
-        glVertex2d( 0.1, -0.1 );
-    glEnd();
+    if (m_universe != 0) {
+        std::vector<Universe::Position> points;
+        m_universe->GetPoints(m_xOffset, m_yOffset, points);
+        if (! points.empty()) {
+            // glLineWidth(1.0);
+            // glColor4f(1.0, 1.0, 1.0, 0.2);
+            // glBegin(GL_LINES);
+            // for (auto p : points) {
+            //     glVertex2d(p.x, p.y);
+            //     glVertex2d(p.x + p.dx, p.y + p.dy);
+            // }
+            // glEnd();
+            glPointSize(8.0);
+            glBegin(GL_POINTS);
+            for (auto p : points) {
+                float c = p.value;
+                glColor4f(1.0, 0.0, 0.0, 0.2);
+                glVertex2d(p.x, p.y);
+                glColor3f(c, c, c);
+                //glColor3f(1.0, 1.0, 1.0);
+                glVertex2d(p.x + p.dx, p.y + p.dy);
+            }
+            glEnd();
+        }
+    }
 }
 
 bool UniverseRenderer::GetQuitCondition()

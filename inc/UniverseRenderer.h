@@ -3,6 +3,8 @@
 
 #include <GLDisplay.h>
 
+class Universe;
+
 class UniverseRenderer : public GLDisplay {
 
     public:
@@ -11,9 +13,11 @@ class UniverseRenderer : public GLDisplay {
         void Render();
         void UserKeys( int keycode, bool shift, bool ctrl );
         bool GetQuitCondition();
+        void SetUniverse(Universe * universe);
 
     private:
         bool m_quitCondition;
+        Universe * m_universe;
 };
 
 #endif // UNIVERSE_RENDERER_H

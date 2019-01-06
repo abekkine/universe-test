@@ -23,11 +23,12 @@ env.Clean( 'default', clean_files )
 env.ParseConfig( 'sdl-config --cflags --libs' )
 env.Append( CPPFLAGS = [ '-g', '-Wall',  '-Wextra' ] )
 env.Append( CPPPATH = [ 'inc' ] )
+env.Append( CPPPATH = [ '/usr/include/libnoise' ] )
 env.Append( LIBS = [ 'GL' ] )
 env.Append( LIBS = [ 'config' ] )
+env.Append( LIBS = [ 'noise' ] )
 
 files = Glob( 'src/*.cpp' )
 
 target_path = 'bin/%s' % TARGET_NAME
 env.Program( target = target_path, source = files )
-

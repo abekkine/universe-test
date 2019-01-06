@@ -23,14 +23,16 @@ class GLDisplay {
         void SetBGColor( float r, float g, float b );
         void SetBGAlpha( float alpha );
 
+    protected:
+        double m_xOffset;
+        double m_yOffset;
+
     private:
         SDL_Surface *m_screen;
         int m_screen_width;
         int m_screen_height;
         double m_world_width;
         double m_world_height;
-        double m_xOffset;
-        double m_yOffset;
         double m_zoom_level;
         double m_zoom_start_pos;
         double m_pan_start_x;

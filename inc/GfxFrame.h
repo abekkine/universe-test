@@ -3,6 +3,7 @@
 
 class Timer;
 class Config;
+class Universe;
 class UniverseRenderer;
 
 class GfxFrame {
@@ -23,6 +24,7 @@ class GfxFrame {
         unsigned int m_numTicks;
         unsigned int m_ticksPeriod;
         Timer* m_timer;
+        Universe * m_universe;
 
         // Methods.
         void InitVars();
