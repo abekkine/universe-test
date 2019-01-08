@@ -52,13 +52,30 @@ public:
     Universe();
     ~Universe();
     void GetStars(double centerX, double centerY, std::vector<StarInfo> & stars);
+    void SetOctaveCount();
+    void SetFrequency();
+    void ParamAddXPosition(double value);
+    void ParamAddYPosition(double value);
+    void ParamAddMinValue(double value);
+    void ParamAddStepSize(double value);
+    void ParamAddFrequency(double value);
+    void ParamAddOctaveCount(int value);
+
 private:
     int GetCategoryIndex(double value);
+
 private:
-    // noise::module::Perlin m_noise;
-    noise::module::Billow m_noise;
+    noise::module::Perlin m_noise;
+    // noise::module::Billow m_noise;
     // noise::module::RidgedMulti m_noise;
     std::vector<StarInfo> m_stars;
+    // Input parameters
+    double param_x_position_;
+    double param_y_position_;
+    double param_min_value_;
+    double param_step_size_;
+    double param_frequency_;
+    int param_octave_count_;
 };
 
 #endif // UNIVERSE_H

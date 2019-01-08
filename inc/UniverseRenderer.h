@@ -18,7 +18,7 @@ class UniverseRenderer : public GLDisplay {
     private:
         bool m_quitCondition;
         Universe * m_universe;
-        bool m_grid_toggle_;
+        bool m_grid_toggle;
 };
 
 #endif // UNIVERSE_RENDERER_H

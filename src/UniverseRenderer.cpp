@@ -8,7 +8,7 @@ UniverseRenderer::UniverseRenderer()
 {
     m_quitCondition = false;
     m_universe = 0;
-    m_grid_toggle_ = true;
+    m_grid_toggle = true;
 }
 
 UniverseRenderer::~UniverseRenderer()
@@ -35,14 +35,14 @@ void UniverseRenderer::Render()
             glPointSize(8.0);
             glBegin(GL_POINTS);
             for (auto p : stars) {
-                if (m_grid_toggle_) {
+                if (m_grid_toggle) {
                     glColor4f(1.0, 0.0, 0.0, 0.2);
                     glVertex2d(p.x, p.y);
                 }
-                float c = p.value;
-                glColor3f(c, c, c);
-                //glColor3f(1.0, 1.0, 1.0);
-                // glColor3dv(p.color_ptr);
+                // float c = p.value;
+                // glColor3f(c, c, c);
+                // glColor3f(1.0, 1.0, 1.0);
+                glColor3dv(p.color_ptr);
                 glVertex2d(p.x + p.dx, p.y + p.dy);
             }
             glEnd();
@@ -63,16 +63,38 @@ void UniverseRenderer::UserKeys( int keycode, bool shift, bool ctrl )
 
     switch( keycode )
     {
-        case SDLK_g:
-            m_grid_toggle_ = ! m_grid_toggle_;
+        case SDLK_SPACE:
+            m_grid_toggle = ! m_grid_toggle;
             break;
+        case SDLK_w: // x_position +
+            m_universe->ParamAddXPosition(1.0); break;
+        case SDLK_s: // x_position -
+            m_universe->ParamAddXPosition(-1.0); break;
+        case SDLK_e: // y_position +
+            m_universe->ParamAddYPosition(1.0); break;
+        case SDLK_d: // y_position -
+            m_universe->ParamAddYPosition(-1.0); break;
+        case SDLK_r: // min_value +
+            m_universe->ParamAddMinValue(0.01); break;
+        case SDLK_f: // min_value -
+            m_universe->ParamAddMinValue(-0.01); break;
+        case SDLK_t: // step_size +
+            m_universe->ParamAddStepSize(0.1); break;
+        case SDLK_g: // step_size -
+            m_universe->ParamAddStepSize(-0.1); break;
+        case SDLK_y: // frequency +
+            m_universe->ParamAddFrequency(0.1); break;
+        case SDLK_h: // frequency -
+            m_universe->ParamAddFrequency(-0.1); break;
+            break;
+        case SDLK_u: // octave_count +
+            m_universe->ParamAddOctaveCount(1); break;
+        case SDLK_j: // octave_count -
+            m_universe->ParamAddOctaveCount(-1); break;
         case SDLK_UP:
         case SDLK_DOWN:
         case SDLK_RIGHT:
         case SDLK_LEFT:
-            break;
-
-        case SDLK_SPACE:
             break;
 
         case SDLK_q:
