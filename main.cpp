@@ -1,6 +1,7 @@
 #include "TextRenderer.hpp"
 #include "Viewport.hpp"
 #include "TestPattern.hpp"
+#include "ButtonProcessor.hpp"
 
 #include <GL/glut.h>
 
@@ -10,34 +11,14 @@ static int cursor_x_ = 0;
 static int cursor_y_ = 0;
 
 // -- mouse button & state
-enum {
-    btn_NONE = -1,
-    btn_LEFT = 0,
-    btn_MIDDLE = 1,
-    btn_RIGHT = 2,
-    btn_SCROLL_UP = 3,
-    btn_SCROLL_DOWN = 4,
-    state_NONE = -1,
-    state_PRESSED = 0,
-    state_RELEASED = 1,
-};
-static int button_ = btn_NONE;
-static int state_ = state_NONE;
-static char button_names_[5][16] = {
-    "Left",
-    "Middle",
-    "Right",
-    "Scroll Up",
-    "Scroll Down"
-};
-static char button_states_[2][16] = {
-    "Pressed",
-    "Released"
-};
+ButtonProcessor right_mouse_processor_(btn_RIGHT);
+ButtonProcessor middle_mouse_processor_(btn_MIDDLE);
+
 // -- window size
 static double window_width_ = 1200.0;
 static double window_height_ = 1200.0;
 static const int MAX_BUFFER = 1024;
+
 // -- world viewport
 Viewport vp_;
 
@@ -69,15 +50,6 @@ void render_world() {
 
 void render_ui() {
     TestPattern::Ui(window_width_, window_height_);
-
-    text_.Print(
-        50, 100
-        , "button(%s), state(%s), x(%d), y(%d)"
-        , button_ > -1 ? button_names_[button_] : "n/a"
-        , state_ > -1 ? button_states_[state_] : "n/a"
-        , cursor_x_
-        , cursor_y_
-    );
 }
 
 void display() {
@@ -122,64 +94,34 @@ void motion(int x, int y) {
     vp_.Pan(cursor_x_, cursor_y_);
     vp_.Zoom(cursor_x_, cursor_y_);
 }
-void process_left_button() {
-    switch (state_) {
-    case state_PRESSED:
-        break;
-    case state_RELEASED:
-        break;
-    case state_NONE:
-    default:
-        break;
-    }
+
+void right_mouse_down() {
+    vp_.PanStart(cursor_x_, cursor_y_);
 }
-void process_right_button() {
-    switch (state_) {
-    case state_PRESSED:
-        vp_.PanStart(cursor_x_, cursor_y_);
-        break;
-    case state_RELEASED:
-        vp_.PanStop();
-        break;
-    case state_NONE:
-    default:
-        break;
-    }
+
+void right_mouse_up() {
+    vp_.PanStop();
 }
-void process_middle_button() {
-    switch (state_) {
-    case state_PRESSED:
-        vp_.ZoomStart(cursor_x_, cursor_y_);
-        break;
-    case state_RELEASED:
-        vp_.ZoomStop();
-        break;
-    case state_NONE:
-    default:
-        break;
-    }
+
+void middle_mouse_down() {
+    vp_.ZoomStart(cursor_x_, cursor_y_);
 }
+
+void middle_mouse_up() {
+    vp_.ZoomStop();
+}
+
 void mouse(int button, int state, int x, int y) {
-    // TODO : Button handling.
+    // Button handling.
     (void)x;
     (void)y;
 
-    button_ = button;
-    state_ = state;
-
-    switch(button_) {
-    case btn_LEFT:
-        process_left_button();
-        break;
+    switch(button) {
     case btn_RIGHT:
-        process_right_button();
+        right_mouse_processor_.Process(static_cast<StateType>(state));
         break;
     case btn_MIDDLE:
-        process_middle_button();
-        break;
-    case btn_SCROLL_UP:
-        break;
-    case btn_SCROLL_DOWN:
+        middle_mouse_processor_.Process(static_cast<StateType>(state));
         break;
     case btn_NONE:
     default:
@@ -203,6 +145,16 @@ void init() {
     glClearColor(0.0, 0.0, 0.0, 0.0);
 
     vp_.SetWindowSize(window_width_, window_height_);
+
+    right_mouse_processor_.RegisterHandlers(
+        right_mouse_down,
+        right_mouse_up
+    );
+
+    middle_mouse_processor_.RegisterHandlers(
+        middle_mouse_down,
+        middle_mouse_up
+    );
 }
 
 int main(int argc, char **argv) {
