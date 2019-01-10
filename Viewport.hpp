@@ -1,6 +1,8 @@
 #ifndef VIEWPORT_HPP_
 #define VIEWPORT_HPP_
 
+#include "ScreenPosition.hpp"
+
 #include <GL/glut.h>
 
 class Viewport {
@@ -32,43 +34,43 @@ public:
         bottom_ = center_y_ - 0.5 * pixel_size_ * window_height_;
         top_ = center_y_ + 0.5 * pixel_size_ * window_height_;
     }
-    void PanStart(const int x, const int y) {
+    void PanStart(const ScreenPosition & p) {
         pan_mode_ = true;
-        pan_start_x_ = x;
-        pan_start_y_ = y;
+        pan_start_x_ = p.x;
+        pan_start_y_ = p.y;
         pan_start_center_x_ = center_x_;
         pan_start_center_y_ = center_y_;
     }
     void PanStop() {
         pan_mode_ = false;
     }
-    void Pan(const int x, const int y) {
+    void Pan(const ScreenPosition & p) {
         if (pan_mode_ == false) {
             return;
         }
 
-        int dx = x - pan_start_x_;
-        int dy = y - pan_start_y_;
+        int dx = p.x - pan_start_x_;
+        int dy = p.y - pan_start_y_;
 
         center_x_ = pan_start_center_x_ - dx * pixel_size_;
         center_y_ = pan_start_center_y_ + dy * pixel_size_;
 
         Update();
     }
-    void ZoomStart(const int x, const int y) {
+    void ZoomStart(const ScreenPosition & p) {
         zoom_mode_ = true;
-        zoom_start_distance_ = GetZoomDistance(x, y);
+        zoom_start_distance_ = GetZoomDistance(p.x, p.y);
         zoom_start_pixel_size_ = pixel_size_;
     }
     void ZoomStop() {
         zoom_mode_ = false;
     }
-    void Zoom(const int x, const int y) {
+    void Zoom(const ScreenPosition & p) {
         if (zoom_mode_ == false) {
             return;
         }
 
-        zoom_distance_ = GetZoomDistance(x, y);
+        zoom_distance_ = GetZoomDistance(p.x, p.y);
 
         double zoom_ratio = (float)(zoom_distance_ - zoom_start_distance_)/(float)zoom_max_distance_;
         pixel_size_ = zoom_start_pixel_size_ * (1.0 - zoom_ratio);
