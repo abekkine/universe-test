@@ -2,6 +2,7 @@
 #define VIEWPORT_HPP_
 
 #include "ScreenPosition.hpp"
+#include "WorldPosition.hpp"
 
 #include <GL/glut.h>
 
@@ -14,11 +15,13 @@ public:
         top_ = 1.0;
         near_ = -1.0;
         far_ = 1.0;
-        center_x_ = 0.0;
-        center_y_ = 0.0;
+        center_.Set(0.0, 0.0);
         pixel_size_ = 0.0015;
     }
     ~Viewport() {}
+    void GetCenter(WorldPosition & center) {
+        center = center_;
+    }
     void SetWindowSize(const double & w, const double & h) {
         window_width_ = w;
         window_height_ = h;
@@ -29,17 +32,16 @@ public:
         glOrtho(left_, right_, bottom_, top_, near_, far_);
     }
     void Update() {
-        left_ = center_x_ - 0.5 * pixel_size_ * window_width_;
-        right_ = center_x_ + 0.5 * pixel_size_ * window_width_;
-        bottom_ = center_y_ - 0.5 * pixel_size_ * window_height_;
-        top_ = center_y_ + 0.5 * pixel_size_ * window_height_;
+        left_ = center_.x - 0.5 * pixel_size_ * window_width_;
+        right_ = center_.x + 0.5 * pixel_size_ * window_width_;
+        bottom_ = center_.y - 0.5 * pixel_size_ * window_height_;
+        top_ = center_.y + 0.5 * pixel_size_ * window_height_;
     }
     void PanStart(const ScreenPosition & p) {
         pan_mode_ = true;
         pan_start_x_ = p.x;
         pan_start_y_ = p.y;
-        pan_start_center_x_ = center_x_;
-        pan_start_center_y_ = center_y_;
+        pan_start_center_ = center_;
     }
     void PanStop() {
         pan_mode_ = false;
@@ -52,8 +54,8 @@ public:
         int dx = p.x - pan_start_x_;
         int dy = p.y - pan_start_y_;
 
-        center_x_ = pan_start_center_x_ - dx * pixel_size_;
-        center_y_ = pan_start_center_y_ + dy * pixel_size_;
+        center_.x = pan_start_center_.x - dx * pixel_size_;
+        center_.y = pan_start_center_.y + dy * pixel_size_;
 
         Update();
     }
@@ -96,8 +98,8 @@ private:
         right_ = left_ + window_width_ * pixel_size_;
         bottom_ = top_ - window_height_ * pixel_size_;
 
-        center_x_ = 0.5 * (left_ + right_);
-        center_y_ = 0.5 * (top_ + bottom_);
+        center_.x = 0.5 * (left_ + right_);
+        center_.y = 0.5 * (top_ + bottom_);
     }
     int GetZoomDistance(const int x, const int y) {
         int dx = x - 0.5 * window_width_;
@@ -128,8 +130,7 @@ private:
 
 private:
     // World center
-    double center_x_;
-    double center_y_;
+    WorldPosition center_;
     // Pixel size
     double pixel_size_;
     // Viewport limits
@@ -146,8 +147,7 @@ private:
     bool pan_mode_;
     int pan_start_x_;
     int pan_start_y_;
-    double pan_start_center_x_;
-    double pan_start_center_y_;
+    WorldPosition pan_start_center_;
     // Zoom Mode
     bool zoom_mode_;
     int zoom_start_distance_;
