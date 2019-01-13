@@ -77,7 +77,28 @@ public:
 
         Update();
     }
+    void ZoomInAt(const ScreenPosition & p) {
+
+        ZoomAt(p, 0.99);
+    }
+    void ZoomOutAt(const ScreenPosition & p) {
+
+        ZoomAt(p, 1.01);
+    }
 private:
+    void ZoomAt(const ScreenPosition & p, double ratio) {
+
+        double pixel_size_0 = pixel_size_;
+        pixel_size_ *= ratio;
+
+        left_ += p.x * (pixel_size_0 - pixel_size_);
+        top_ -= p.y * (pixel_size_0 - pixel_size_);
+        right_ = left_ + window_width_ * pixel_size_;
+        bottom_ = top_ - window_height_ * pixel_size_;
+
+        center_x_ = 0.5 * (left_ + right_);
+        center_y_ = 0.5 * (top_ + bottom_);
+    }
     int GetZoomDistance(const int x, const int y) {
         int dx = x - 0.5 * window_width_;
         int dy = y - 0.5 * window_height_;

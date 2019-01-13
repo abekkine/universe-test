@@ -11,8 +11,9 @@
 ScreenPosition cursor_;
 
 // -- mouse button & state
-ButtonProcessor right_mouse_processor_(btn_RIGHT);
-ButtonProcessor middle_mouse_processor_(btn_MIDDLE);
+ButtonProcessor right_mouse_processor_;
+ButtonProcessor middle_mouse_processor_;
+ButtonProcessor scroll_wheel_processor_;
 
 // -- window size
 static double window_width_ = 1200.0;
@@ -40,6 +41,20 @@ void middle_mouse_up() {
     vp_.ZoomStop();
 }
 
+static int wheel_dir_ = -1;
+void wheel_up() {
+    switch (wheel_dir_) {
+    case btn_SCROLL_UP:
+        vp_.ZoomInAt(cursor_);
+        break;
+    case btn_SCROLL_DOWN:
+        vp_.ZoomOutAt(cursor_);
+        break;
+    default:
+        break;
+    }
+}
+
 void render_world() {
     TestPattern::World();
 }
@@ -59,6 +74,11 @@ void init_application() {
     middle_mouse_processor_.RegisterHandlers(
         middle_mouse_down,
         middle_mouse_up
+    );
+
+    scroll_wheel_processor_.RegisterHandlers(
+        0,
+        wheel_up
     );
 }
 
@@ -121,6 +141,11 @@ namespace display {
             break;
         case btn_MIDDLE:
             middle_mouse_processor_.Process(static_cast<StateType>(state));
+            break;
+        case btn_SCROLL_UP:
+        case btn_SCROLL_DOWN:
+            wheel_dir_ = button;
+            scroll_wheel_processor_.Process(static_cast<StateType>(state));
             break;
         case btn_NONE:
         default:

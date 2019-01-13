@@ -20,9 +20,8 @@ enum StateType {
 
 class ButtonProcessor {
 public:
-    ButtonProcessor(ButtonIdType button_id)
-    : button_id_(button_id)
-    , button_pressed_handler_(0)
+    ButtonProcessor()
+    : button_pressed_handler_(0)
     , button_released_handler_(0)
     {}
     ~ButtonProcessor() {}
@@ -52,7 +51,6 @@ public:
     }
 
 private:
-    ButtonIdType button_id_;
     std::function<void()> button_pressed_handler_;
     std::function<void()> button_released_handler_;
 };
