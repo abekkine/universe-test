@@ -3,6 +3,7 @@
 #include "TestPattern.hpp"
 #include "ButtonProcessor.hpp"
 #include "ScreenPosition.hpp"
+#include "Universe.h"
 
 #include <GL/glut.h>
 
@@ -16,13 +17,17 @@ ButtonProcessor middle_mouse_processor_;
 ButtonProcessor scroll_wheel_processor_;
 
 // -- window size
-static double window_width_ = 1200.0;
-static double window_height_ = 1200.0;
+static double window_width_ = 2048.0;
+static double window_height_ = 2048.0;
 static const int MAX_BUFFER = 1024;
 
 // -- world viewport
 Viewport vp_;
 
+// -- universe
+Universe universe_;
+
+// -- text rendering
 TextRenderer text_;
 
 void right_mouse_down() {
@@ -56,7 +61,24 @@ void wheel_up() {
 }
 
 void render_world() {
-    TestPattern::World();
+//    TestPattern::World();
+    WorldPosition center;
+    vp_.GetCenter(center);
+    std::vector<Universe::StarInfo> stars;
+    universe_.GetStars(center.x, center.y, stars);
+    if (! stars.empty()) {
+        glPointSize(8.0);
+        glBegin(GL_POINTS);
+        for (auto p : stars) {
+            // Grid point
+            glColor4f(1.0, 0.0, 0.0, 0.2);
+            glVertex2d(p.x, p.y);
+            // Star itself
+            glColor3dv(p.color_ptr);
+            glVertex2d(p.x + p.dx, p.y + p.dy);
+        }
+        glEnd();
+    }
 }
 
 void render_ui() {
