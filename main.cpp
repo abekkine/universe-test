@@ -3,6 +3,7 @@
 #include "TestPattern.hpp"
 #include "ButtonProcessor.hpp"
 #include "ScreenPosition.hpp"
+#include "CommandConsole.hpp"
 #include "Universe.h"
 
 #include <GL/glut.h>
@@ -29,6 +30,9 @@ Universe universe_;
 
 // -- text rendering
 TextRenderer text_;
+
+// -- command console
+CommandConsole console_;
 
 void right_mouse_down() {
     vp_.PanStart(cursor_);
@@ -83,6 +87,8 @@ void render_world() {
 
 void render_ui() {
     TestPattern::Ui(window_width_, window_height_);
+
+    console_.Render();
 }
 
 void init_application() {
@@ -102,6 +108,9 @@ void init_application() {
         0,
         wheel_up
     );
+
+    console_.SetPosition(100, window_height_ - 200);
+    console_.SetSize(window_width_ - 200, 100);
 }
 
 namespace display {
@@ -141,7 +150,15 @@ namespace display {
         switch(key) {
         case 27:
             exit(0); break;
+        default:
+            console_.InputRegularChar(key);
+            break;
         }
+    }
+
+    void special(int key, int x, int y) {
+
+        console_.InputSpecialChar(key);
     }
 
     void reshape(int w, int h) {
@@ -188,6 +205,7 @@ namespace display {
 
         glutDisplayFunc(display);
         glutKeyboardFunc(keyboard);
+        glutSpecialFunc(special);
         glutReshapeFunc(reshape);
         glutMouseFunc(mouse);
         glutMotionFunc(motion);

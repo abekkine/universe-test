@@ -76,13 +76,13 @@ void Universe::GetStars(double centerX, double centerY, std::vector<StarInfo> & 
                 static double max_v = -1000.0;
                 if (value > max_v) {
                     max_v = value;
-                    std::cout << "MAX(" << max_v << "), ";
-                    std::cout << "MIN(" << min_v << ")\n";
+                    // std::cout << "MAX(" << max_v << "), ";
+                    // std::cout << "MIN(" << min_v << ")\n";
                 }
                 else if (value < min_v) {
                     min_v = value;
-                    std::cout << "MAX(" << max_v << "), ";
-                    std::cout << "MIN(" << min_v << ")\n";
+                    // std::cout << "MAX(" << max_v << "), ";
+                    // std::cout << "MIN(" << min_v << ")\n";
                 }
             }
             if (value > param_min_value_) { // 0.2) {
