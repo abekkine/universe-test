@@ -1,4 +1,3 @@
-#include "TextRenderer.hpp"
 #include "Viewport.hpp"
 #include "TestPattern.hpp"
 #include "ButtonProcessor.hpp"
@@ -27,9 +26,6 @@ Viewport vp_;
 
 // -- universe
 Universe universe_;
-
-// -- text rendering
-TextRenderer text_;
 
 // -- command console
 CommandConsole console_;

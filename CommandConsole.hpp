@@ -1,7 +1,7 @@
 #ifndef COMMAND_CONSOLE_HPP_
 #define COMMAND_CONSOLE_HPP_
 
-#include "TextRenderer.hpp"
+#include "TextRendererFactory.hpp"
 
 #include <string>
 
@@ -10,6 +10,10 @@
 class CommandConsole {
 public:
     CommandConsole() {
+
+        text_ = TextRendererFactory::getTextRenderer();
+        text_->AddFont(1, "ubuntu_mono.ttf");
+
         x_ = 100;
         y_ = 100;
         width_ = 200;
@@ -57,15 +61,16 @@ private:
     void RenderInput() {
 
         glColor3f(1.0, 1.0, 1.0);
-        text_.Print(margin_, margin_, input_string_.c_str()); 
+        text_->UseFont(1, 24);
+        text_->Print(margin_, margin_, input_string_.c_str());
     }
     void RenderCursor() {
         static int blink_counter = 0;
         ++blink_counter;
         if (blink_counter < 20) {
 
-            int cursor_pos = input_string_.length() * 9;
-            text_.Print(margin_ + cursor_pos, margin_, "_");
+            int cursor_pos = input_string_.length() * 12;
+            text_->Print(margin_ + cursor_pos, margin_, "_");
         }
         else if (blink_counter < 40) {
         }
@@ -75,12 +80,11 @@ private:
     }
 
 private:
-    TextRenderer text_;
-    const int margin_ = 20;
+    TextRendererInterface * text_;
+    const int margin_ = 30;
     int x_, y_;
     int width_, height_;
     std::string input_string_;
 };
 
 #endif // COMMAND_CONSOLE_HPP_
-

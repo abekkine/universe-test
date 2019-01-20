@@ -4,7 +4,8 @@ OBJS=$(SRCS:%.cpp=%.o)
 CXXFLAGS  = -g -std=c++11
 #CXXFLAGS += -Wall -Wextra -Werror -Wfatal-errors
 CXXFLAGS += -I/usr/include/libnoise
-LIBS=-lglut -lGLU -lGL -lnoise
+CXXFLAGS += -I/usr/include/freetype2
+LIBS=-lglut -lGLU -lGL -lnoise -lftgl
 
 all: $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
