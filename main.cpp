@@ -12,6 +12,7 @@
 ScreenPosition cursor_;
 
 // -- mouse button & state
+ButtonProcessor left_mouse_processor_;
 ButtonProcessor right_mouse_processor_;
 ButtonProcessor middle_mouse_processor_;
 ButtonProcessor scroll_wheel_processor_;
@@ -29,6 +30,14 @@ Universe universe_;
 
 // -- command console
 CommandConsole console_;
+
+void left_mouse_down() {
+    console_.StartSlider(cursor_);
+}
+
+void left_mouse_up() {
+    console_.StopSlider();
+}
 
 void right_mouse_down() {
     vp_.PanStart(cursor_);
@@ -89,6 +98,11 @@ void render_ui() {
 
 void init_application() {
     vp_.SetWindowSize(window_width_, window_height_);
+
+    left_mouse_processor_.RegisterHandlers(
+        left_mouse_down,
+        left_mouse_up
+    );
 
     right_mouse_processor_.RegisterHandlers(
         right_mouse_down,
@@ -164,6 +178,8 @@ namespace display {
     void motion(int x, int y) {
         cursor_.Set(x, y);
 
+        console_.Update(cursor_);
+
         vp_.Pan(cursor_);
         vp_.Zoom(cursor_);
     }
@@ -171,6 +187,9 @@ namespace display {
     void mouse(int button, int state, int x, int y) {
         // Button handling.
         switch(button) {
+        case btn_LEFT:
+            left_mouse_processor_.Process(static_cast<StateType>(state));
+            break;
         case btn_RIGHT:
             right_mouse_processor_.Process(static_cast<StateType>(state));
             break;

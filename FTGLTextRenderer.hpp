@@ -41,6 +41,7 @@ public:
         glRasterPos2i(x, y);
         va_list args;
         va_start(args, fmt);
+        // BUG : Does not working...
         Print(fmt, args);
         va_end(args);
     }
