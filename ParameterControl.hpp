@@ -1,5 +1,5 @@
-#ifndef COMMAND_CONSOLE_HPP_
-#define COMMAND_CONSOLE_HPP_
+#ifndef PARAMETER_CONTROL_HPP_
+#define PARAMETER_CONTROL_HPP_
 
 #include "TextRendererFactory.hpp"
 #include "ScreenPosition.hpp"
@@ -9,7 +9,7 @@
 
 #include <GL/glut.h>
 
-class CommandConsole {
+class ParameterControl {
 private:
     struct {
         int x, y;
@@ -20,7 +20,7 @@ private:
         double value;
     } slider_;
 public:
-    CommandConsole() {
+    ParameterControl() {
 
         slider_.x = 50;
         slider_.y = 50;
@@ -40,7 +40,7 @@ public:
         height_ = 50;
         slider_active_ = false;
     }
-    ~CommandConsole() {}
+    ~ParameterControl() {}
     void SetSize(int w, int h) {
         width_ = w;
         height_ = h;
@@ -61,7 +61,10 @@ public:
 
         if (slider_active_) {
             if (cursor_.y > slider_.y &&
-                cursor_.y < slider_.y + slider_.h) {
+                cursor_.y < slider_.y + slider_.h &&
+                cursor_.x > slider_.x &&
+                cursor_.x < slider_.x + slider_.w
+            ) {
                 slider_.pos = cursor_.y;
 
                 slider_.value = slider_.top;
@@ -138,4 +141,4 @@ private:
     bool slider_active_;
 };
 
-#endif // COMMAND_CONSOLE_HPP_
+#endif // PARAMETER_CONTROL_HPP_

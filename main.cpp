@@ -2,7 +2,7 @@
 #include "TestPattern.hpp"
 #include "ButtonProcessor.hpp"
 #include "ScreenPosition.hpp"
-#include "CommandConsole.hpp"
+#include "ParameterControl.hpp"
 #include "Universe.h"
 
 #include <GL/glut.h>
@@ -29,7 +29,7 @@ Viewport vp_;
 Universe universe_;
 
 // -- command console
-CommandConsole console_;
+ParameterControl console_;
 
 void left_mouse_down() {
     console_.StartSlider(cursor_);
