@@ -4,6 +4,8 @@
 #include <vector>
 #include <noise.h>
 
+#include "UniverseParameters.hpp"
+
 class Universe {
 private:
     /// 1000C  #ff0015
@@ -24,7 +26,7 @@ private:
     // 0.0013     B blue-white      (<0.9988) #d8e9fe
     // 0.00000003 O blue            (<0.9996) #629afa
     // --         Neutron Star      (<0.9999) #2050e0
-    // --         Black Hole        (otherwise) #000000, #800080
+    // --         Black Hole      (otherwise) #000000, #800080
     enum {
         e_NUM_CATEGORIES = 9,
         e_PROB_INDEX = 0,
@@ -38,7 +40,7 @@ private:
         {0.9977 /*0.9975*/, 1.000, 1.000, 1.000},
         {0.9992 /*0.9988*/, 0.847, 0.914, 0.996},
         {0.9997 /*0.9996*/, 0.384, 0.604, 0.980},
-        {0.9999 /*0.9999*/,  0.126, 0.314, 0.878},
+        {0.9999 /*0.9999*/, 0.126, 0.314, 0.878},
         {1.0000 /*1.0000*/, 0.500, 0.000, 0.500}
     };
 public:
@@ -61,6 +63,10 @@ public:
     void ParamAddFrequency(double value);
     void ParamAddOctaveCount(int value);
 
+    UniverseParameters * getUniverseParams() {
+        return &m_params;
+    }
+
 private:
     int GetCategoryIndex(double value);
 
@@ -70,12 +76,7 @@ private:
     // noise::module::RidgedMulti m_noise;
     std::vector<StarInfo> m_stars;
     // Input parameters
-    double param_x_position_;
-    double param_y_position_;
-    double param_min_value_;
-    double param_step_size_;
-    double param_frequency_;
-    int param_octave_count_;
+    UniverseParameters m_params;
 };
 
 #endif // UNIVERSE_H

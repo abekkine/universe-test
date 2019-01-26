@@ -29,14 +29,14 @@ Viewport vp_;
 Universe universe_;
 
 // -- command console
-ParameterControl console_;
+ParameterControl control_;
 
 void left_mouse_down() {
-    console_.StartSlider(cursor_);
+    control_.StartSlider(cursor_);
 }
 
 void left_mouse_up() {
-    console_.StopSlider();
+    control_.StopSlider();
 }
 
 void right_mouse_down() {
@@ -93,7 +93,7 @@ void render_world() {
 void render_ui() {
     TestPattern::Ui(window_width_, window_height_);
 
-    console_.Render();
+    control_.Render();
 }
 
 void init_application() {
@@ -119,8 +119,16 @@ void init_application() {
         wheel_up
     );
 
-    console_.SetPosition(100, window_height_ - 200);
-    console_.SetSize(window_width_ - 200, 100);
+    control_.SetPosition(100, window_height_ - 200);
+    control_.SetSize(window_width_ - 200, 100);
+
+    UniverseParameters * params = universe_.getUniverseParams();
+    // control_.AddSliderDouble(&(params->frequency), 0.01, 2.0);
+    // control_.AddSliderInteger(&(params->octaveCount), 1, 8);
+    // control_.AddSliderDouble(&(params->minValue), 0.2, 2.0);
+    // control_.AddSliderDouble(&(params->stepSize), 0.01, 1.0);
+    // control_.AddSliderDouble(&(params->x), -20.0, 20.0);
+    // control_.AddSliderDouble(&(params->y), -20.0, 20.0);
 }
 
 namespace display {
@@ -161,14 +169,14 @@ namespace display {
         case 27:
             exit(0); break;
         default:
-            console_.InputRegularChar(key);
+            control_.InputRegularChar(key);
             break;
         }
     }
 
     void special(int key, int x, int y) {
 
-        console_.InputSpecialChar(key);
+        control_.InputSpecialChar(key);
     }
 
     void reshape(int w, int h) {
@@ -178,7 +186,7 @@ namespace display {
     void motion(int x, int y) {
         cursor_.Set(x, y);
 
-        console_.Update(cursor_);
+        control_.Update(cursor_);
 
         vp_.Pan(cursor_);
         vp_.Zoom(cursor_);
