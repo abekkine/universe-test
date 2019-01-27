@@ -19,6 +19,11 @@ public:
         active_ = false;
     }
     ~UiSlider() {}
+    void SetPosition(const ScreenPosition & p) {
+        UiObject::SetPosition(p);
+
+        position_ = p.y;
+    }
     void SetValueCallback(std::function<void(const double &)> callback) {
         value_callback_ = callback;
     }
