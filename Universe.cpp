@@ -17,26 +17,44 @@ void Universe::setOctaveCount(const double & value) {
     m_params.octaveCount = 1 + static_cast<int>(7.0 * value);
     m_noise.SetOctaveCount(m_params.octaveCount);
 }
+double Universe::getOctaveCount() {
+    return ((double)m_params.octaveCount - 1.0) / 7.0;
+}
 
 void Universe::setFrequency(const double & value) {
     m_params.frequency = (value * 15.9) + 0.1;
     m_noise.SetFrequency(m_params.frequency);
 }
+double Universe::getFrequency() {
+    return ((m_params.frequency - 0.1) / 15.9);
+}
 
 void Universe::setStepSize(const double & value) {
     m_params.stepSize = 0.1 + value * 1.9;
+}
+double Universe::getStepSize() {
+    return ((m_params.stepSize - 0.1) / 1.9);
 }
 
 void Universe::setXPosition(const double & value) {
     m_params.x = value * 40.0 - 20.0;
 }
+double Universe::getXPosition() {
+    return ((m_params.x + 20.0) / 40.0);
+}
 
 void Universe::setYPosition(const double & value) {
     m_params.y = value * 40.0 - 20.0;
 }
+double Universe::getYPosition() {
+    return ((m_params.y + 20.0) / 40.0);
+}
 
 void Universe::setMinValue(const double & value) {
     m_params.minValue = value * 0.9;
+}
+double Universe::getMinValue() {
+    return (m_params.minValue / 0.9);
 }
 
 void Universe::GetStars(double centerX, double centerY, std::vector<StarInfo> & stars) {

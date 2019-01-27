@@ -43,6 +43,7 @@ public:
         slider->SetLabel("OC");
         slider->SetPosition(p);
         slider->SetSize(sw, sh);
+        slider->SetInitialValue(universe_->getOctaveCount());
         slider->SetValueCallback(
             std::bind(&Universe::setOctaveCount, universe_, _1)
         );
@@ -54,6 +55,7 @@ public:
         slider->SetLabel("FQ");
         slider->SetPosition(p);
         slider->SetSize(sw, sh);
+        slider->SetInitialValue(universe_->getFrequency());
         slider->SetValueCallback(
             std::bind(&Universe::setFrequency, universe_, _1)
         );
@@ -65,6 +67,7 @@ public:
         slider->SetLabel("SS");
         slider->SetPosition(p);
         slider->SetSize(sw, sh);
+        slider->SetInitialValue(universe_->getStepSize());
         slider->SetValueCallback(
             std::bind(&Universe::setStepSize, universe_, _1)
         );
@@ -76,6 +79,7 @@ public:
         slider->SetLabel("X");
         slider->SetPosition(p);
         slider->SetSize(sw, sh);
+        slider->SetInitialValue(universe_->getXPosition());
         slider->SetValueCallback(
             std::bind(&Universe::setXPosition, universe_, _1)
         );
@@ -86,6 +90,7 @@ public:
         slider->SetLabel("Y");
         slider->SetPosition(p);
         slider->SetSize(sw, sh);
+        slider->SetInitialValue(universe_->getYPosition());
         slider->SetValueCallback(
             std::bind(&Universe::setYPosition, universe_, _1)
         );
@@ -97,6 +102,7 @@ public:
         slider->SetLabel("MV");
         slider->SetPosition(p);
         slider->SetSize(sw, sh);
+        slider->SetInitialValue(universe_->getMinValue());
         slider->SetValueCallback(
             std::bind(&Universe::setMinValue, universe_, _1)
         );

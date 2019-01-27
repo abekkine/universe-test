@@ -26,6 +26,10 @@ public:
     void SetLabel(const std::string & label) {
         label_ = label;
     }
+    void SetInitialValue(const double & value) {
+        current_value_ = value;
+        position_ = slider_position_.y + h_ * (current_value_ - kTopValue) / (kBottomValue - kTopValue);
+    }
     void SetPosition(const ScreenPosition & p) {
         UiObject::SetPosition(p);
 

@@ -53,11 +53,17 @@ public:
 
 public: // setters
     void setOctaveCount(const double & value);
+    double getOctaveCount();
     void setFrequency(const double & value);
+    double getFrequency();
     void setStepSize(const double & value);
+    double getStepSize();
     void setXPosition(const double & value);
+    double getXPosition();
     void setYPosition(const double & value);
+    double getYPosition();
     void setMinValue(const double & value);
+    double getMinValue();
 
 public:
     Universe();

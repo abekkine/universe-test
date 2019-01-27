@@ -3,7 +3,7 @@ SRCS=$(wildcard *.cpp)
 OBJS=$(SRCS:%.cpp=%.o)
 CXXFLAGS  = -g -std=c++11
 #CXXFLAGS += -Wall -Wextra -Werror -Wfatal-errors
-CXXFLAGS += -Wfatal-errors
+CXXFLAGS += -Werror -Wfatal-errors
 CXXFLAGS += -I/usr/include/libnoise
 CXXFLAGS += -I/usr/include/freetype2
 LIBS=-lglut -lGLU -lGL -lnoise -lftgl
