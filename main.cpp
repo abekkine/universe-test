@@ -76,17 +76,17 @@ void render_world() {
     std::vector<Universe::StarInfo> stars;
     universe_.GetStars(center.x, center.y, stars);
     if (! stars.empty()) {
-        glPointSize(8.0);
-        glBegin(GL_POINTS);
         for (auto p : stars) {
-            // Grid point
-            glColor4f(1.0, 0.0, 0.0, 0.2);
-            glVertex2d(p.x, p.y);
-            // Star itself
-            glColor3dv(p.color_ptr);
+            glPointSize(8.0 * p.size);
+            glBegin(GL_POINTS);
+            glColor3d(
+                p.color_ptr[0] + p.color_dev,
+                p.color_ptr[1] + p.color_dev,
+                p.color_ptr[2] + p.color_dev
+            );
             glVertex2d(p.x + p.dx, p.y + p.dy);
+            glEnd();
         }
-        glEnd();
     }
 }
 

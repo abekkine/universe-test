@@ -107,6 +107,18 @@ public:
             std::bind(&Universe::setMinValue, universe_, _1)
         );
         sliders_.push_back(slider);
+
+        // z index
+        p.x += xs;
+        slider = new UiSlider();
+        slider->SetLabel("ZI");
+        slider->SetPosition(p);
+        slider->SetSize(sw, sh);
+        slider->SetInitialValue(universe_->getZIndex());
+        slider->SetValueCallback(
+            std::bind(&Universe::setZIndex, universe_, _1)
+        );
+        sliders_.push_back(slider);
     }
 
     void SetUniverse(Universe * universe) {
@@ -189,13 +201,15 @@ private:
         glRasterPos2i(tx, ty); ty += ts;
         text_->Print("Octave Count : %d", params.octaveCount);
         glRasterPos2i(tx, ty); ty += ts;
-        text_->Print("Frequency    : %.3f", params.frequency);
+        text_->Print("Frequency    : %.8f", params.frequency);
         glRasterPos2i(tx, ty); ty += ts;
-        text_->Print("(X, Y)       : (%.3f, %.3f)", params.x, params.y);
+        text_->Print("(X, Y)       : (%.8f, %.8f)", params.x, params.y);
         glRasterPos2i(tx, ty); ty += ts;
-        text_->Print("Min Value    : %.3f", params.minValue);
+        text_->Print("Min Value    : %.8f", params.minValue);
         glRasterPos2i(tx, ty); ty += ts;
-        text_->Print("Step Size    : %.3f", params.stepSize);
+        text_->Print("Step Size    : %.8f", params.stepSize);
+        glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("Z-Index      : %.8f", params.zIndex);
     }
     void InitSlider() {
     }
