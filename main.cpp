@@ -121,14 +121,8 @@ void init_application() {
 
     control_.SetPosition(100, window_height_ - 200);
     control_.SetSize(window_width_ - 200, 100);
-
-    UniverseParameters * params = universe_.getUniverseParams();
-    // control_.AddSliderDouble(&(params->frequency), 0.01, 2.0);
-    // control_.AddSliderInteger(&(params->octaveCount), 1, 8);
-    // control_.AddSliderDouble(&(params->minValue), 0.2, 2.0);
-    // control_.AddSliderDouble(&(params->stepSize), 0.01, 1.0);
-    // control_.AddSliderDouble(&(params->x), -20.0, 20.0);
-    // control_.AddSliderDouble(&(params->y), -20.0, 20.0);
+    control_.SetUniverse(&universe_);
+    control_.Init();
 }
 
 namespace display {

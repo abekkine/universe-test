@@ -50,18 +50,20 @@ public:
         float value;
         double *color_ptr;
     };
+
+public: // setters
+    void setOctaveCount(const double & value);
+    void setFrequency(const double & value);
+    void setStepSize(const double & value);
+    void setXPosition(const double & value);
+    void setYPosition(const double & value);
+    void setMinValue(const double & value);
+
 public:
     Universe();
     ~Universe();
     void GetStars(double centerX, double centerY, std::vector<StarInfo> & stars);
     void SetOctaveCount();
-    void SetFrequency();
-    void ParamAddXPosition(double value);
-    void ParamAddYPosition(double value);
-    void ParamAddMinValue(double value);
-    void ParamAddStepSize(double value);
-    void ParamAddFrequency(double value);
-    void ParamAddOctaveCount(int value);
 
     UniverseParameters * getUniverseParams() {
         return &m_params;

@@ -4,21 +4,23 @@
 #include "UiObject.hpp"
 
 class UiSlider : public UiObject {
+private:
+    const double kTopValue;
+    const double kBottomValue;
+
 public:
-    UiSlider() {
-        SetValueLimits(0.0, 1.0);
-        SetValuePosition(0);
+    UiSlider()
+    : kTopValue(1.0)
+    , kBottomValue(0.0)
+    {
+        position_ = 0;
+        UpdateCurrentValue();
+        value_callback_ = 0;
         active_ = false;
     }
     ~UiSlider() {}
-    void SetValuePosition(const int value) {
-        position_ = value;
-        UpdateCurrentValue();
-    }
-    void SetValueLimits(const double & bottom, const double & top) {
-        bottom_value_ = bottom;
-        top_value_ = top;
-        UpdateCurrentValue();
+    void SetValueCallback(std::function<void(const double &)> callback) {
+        value_callback_ = callback;
     }
     void Render() {
         int sm = 4;
@@ -61,18 +63,18 @@ public:
 
 private:
     void UpdateCurrentValue() {
-        current_value_ = top_value_ + (position_ - y_) * (bottom_value_ - top_value_) / h_;
+        current_value_ = kTopValue + (position_ - y_) * (kBottomValue - kTopValue) / h_;
+        if (value_callback_ != 0) {
+            value_callback_(current_value_);
+        }
     }
 
 private:
     int position_;
-
-    double top_value_;
-    double bottom_value_;
     double current_value_;
-
     ScreenPosition start_position_;
     bool active_;
+    std::function<void(const double &)> value_callback_;
 };
 
 #endif // UI_SLIDER_HPP_
