@@ -62,6 +62,9 @@ public: // setters
 public:
     Universe();
     ~Universe();
+    void GetParameters(UniverseParameters & params) {
+        params = m_params;
+    }
     void GetStars(double centerX, double centerY, std::vector<StarInfo> & stars);
     void SetOctaveCount();
 

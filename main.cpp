@@ -119,8 +119,8 @@ void init_application() {
         wheel_up
     );
 
-    control_.SetPosition(100, window_height_ - 200);
-    control_.SetSize(window_width_ - 200, 100);
+    control_.SetPosition(50, window_height_ - 400);
+    control_.SetSize(window_width_ - 100, 350);
     control_.SetUniverse(&universe_);
     control_.Init();
 }

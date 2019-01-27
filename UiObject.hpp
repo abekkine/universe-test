@@ -16,7 +16,7 @@ public:
     }
 
 protected:
-    bool isMouseOver(const ScreenPosition & p) {
+    virtual bool isMouseOver(const ScreenPosition & p) {
         return (
             p.y > y_ &&
             p.y < y_ + h_ &&

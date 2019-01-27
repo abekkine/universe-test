@@ -40,6 +40,7 @@ public:
 
         // octave count
         slider = new UiSlider();
+        slider->SetLabel("OC");
         slider->SetPosition(p);
         slider->SetSize(sw, sh);
         slider->SetValueCallback(
@@ -50,6 +51,7 @@ public:
         // frequency
         p.x += xs;
         slider = new UiSlider();
+        slider->SetLabel("FQ");
         slider->SetPosition(p);
         slider->SetSize(sw, sh);
         slider->SetValueCallback(
@@ -60,6 +62,7 @@ public:
         // step size
         p.x += xs;
         slider = new UiSlider();
+        slider->SetLabel("SS");
         slider->SetPosition(p);
         slider->SetSize(sw, sh);
         slider->SetValueCallback(
@@ -70,6 +73,7 @@ public:
         // x, y
         p.x += xs;
         slider = new UiSlider();
+        slider->SetLabel("X");
         slider->SetPosition(p);
         slider->SetSize(sw, sh);
         slider->SetValueCallback(
@@ -79,6 +83,7 @@ public:
 
         p.x += xs;
         slider = new UiSlider();
+        slider->SetLabel("Y");
         slider->SetPosition(p);
         slider->SetSize(sw, sh);
         slider->SetValueCallback(
@@ -89,6 +94,7 @@ public:
         // min value
         p.x += xs;
         slider = new UiSlider();
+        slider->SetLabel("MV");
         slider->SetPosition(p);
         slider->SetSize(sw, sh);
         slider->SetValueCallback(
@@ -149,13 +155,41 @@ public:
 private:
     void RenderFrame() {
 
-        glColor4f(0.0, 0.0, 1.0, 0.3);
+        glColor4f(0.1, 0.0, 0.0, 0.8);
         glBegin(GL_QUADS);
         glVertex2i(0, 0);
         glVertex2i(width_, 0);
         glVertex2i(width_, height_);
         glVertex2i(0, height_);
         glEnd();
+
+        glColor4f(0.8, 0.5, 0.5, 0.2);
+        glBegin(GL_LINE_LOOP);
+        glVertex2i(0, 0);
+        glVertex2i(width_, 0);
+        glVertex2i(width_, height_);
+        glVertex2i(0, height_);
+        glEnd();
+
+        UniverseParameters params;
+        universe_->GetParameters(params);
+
+        const int tx = 20;
+        const int ts = 40;
+        int ty = 40;
+
+        text_->UseFont(1, 32);
+        glColor3f(1.0, 0.7, 0.7);
+        glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("Octave Count : %d", params.octaveCount);
+        glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("Frequency    : %.3f", params.frequency);
+        glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("(X, Y)       : (%.3f, %.3f)", params.x, params.y);
+        glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("Min Value    : %.3f", params.minValue);
+        glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("Step Size    : %.3f", params.stepSize);
     }
     void InitSlider() {
     }
@@ -163,11 +197,6 @@ private:
 
         for (auto s : sliders_) {
             s->Render();
-
-            // glColor3f(1.0, 1.0, 1.0);
-            // text_->UseFont(1, 32);
-            // glRasterPos2i(200, 100);
-            // text_->Print("%.2f", slider_.GetValue());
         }
     }
 
