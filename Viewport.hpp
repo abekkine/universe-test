@@ -22,6 +22,13 @@ public:
     void GetCenter(WorldPosition & center) {
         center = center_;
     }
+    void GetWorldForCursor(const ScreenPosition & p, WorldPosition & w) {
+        w.x = left_ + p.x * (right_ - left_) / window_width_;
+        w.y = top_ - p.y * (top_ - bottom_) / window_height_;
+    }
+    double GetSize() {
+        return (right_ - left_);
+    }
     void SetWindowSize(const double & w, const double & h) {
         window_width_ = w;
         window_height_ = h;

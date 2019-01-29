@@ -4,6 +4,7 @@
 #include "TextRendererFactory.hpp"
 #include "ScreenPosition.hpp"
 #include "UiSlider.hpp"
+#include "Viewport.hpp"
 #include "UniverseParameters.hpp"
 #include "Universe.h"
 
@@ -22,11 +23,15 @@ public:
         width_ = 200;
         height_ = 50;
 
+        world_pos_.Set(0.0, 0.0);
+
         text_ = TextRendererFactory::getTextRenderer();
         text_->AddFont(1, "ubuntu_mono.ttf");
     }
     ~ParameterControl() {}
-
+    void SetViewport(Viewport * vp) {
+        vp_ = vp;
+    }
     void Init() {
         ScreenPosition p(50, 50);
         const int sw = 50;
@@ -198,6 +203,7 @@ private:
 
         text_->UseFont(1, 32);
         glColor3f(1.0, 0.7, 0.7);
+        // First column
         glRasterPos2i(tx, ty); ty += ts;
         text_->Print("Octave Count : %d", params.octaveCount);
         glRasterPos2i(tx, ty); ty += ts;
@@ -210,6 +216,20 @@ private:
         text_->Print("Step Size    : %.8f", params.stepSize);
         glRasterPos2i(tx, ty); ty += ts;
         text_->Print("Z-Index      : %.8f", params.zIndex);
+        // Second column
+        ty = 40;
+
+        WorldPosition screen_center;
+        vp_->GetCenter(screen_center);
+        vp_->GetWorldForCursor(cursor_, world_pos_);
+        glRasterPos2i(tx + 800, ty); ty += ts;
+        text_->Print("Center @ (%.5f, %.5f)", screen_center.x, screen_center.y);
+        glRasterPos2i(tx + 800, ty); ty += ts;
+        text_->Print("Screen size @ %.5f", vp_->GetSize());
+        glRasterPos2i(tx + 800, ty); ty += ts;
+        text_->Print("Cursor @ (%4d, %4d)", cursor_.x, cursor_.y);
+        glRasterPos2i(tx + 800, ty); ty += ts;
+        text_->Print("World @ (%.4f, %.4f)", world_pos_.x, world_pos_.y);
     }
     void InitSlider() {
     }
@@ -228,7 +248,9 @@ private:
     std::string input_string_;
     ScreenPosition cursor_;
     Universe * universe_;
+    WorldPosition world_pos_;
     std::vector<UiSlider *> sliders_;
+    Viewport * vp_;
 };
 
 #endif // PARAMETER_CONTROL_HPP_

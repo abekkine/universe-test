@@ -122,6 +122,7 @@ void init_application() {
     control_.SetPosition(50, window_height_ - 400);
     control_.SetSize(window_width_ - 100, 350);
     control_.SetUniverse(&universe_);
+    control_.SetViewport(&vp_);
     control_.Init();
 }
 
@@ -181,6 +182,7 @@ namespace display {
         cursor_.Set(x, y);
 
         control_.Update(cursor_);
+
         vp_.UpdateCursor(cursor_);
     }
 
