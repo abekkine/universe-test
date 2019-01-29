@@ -181,9 +181,7 @@ namespace display {
         cursor_.Set(x, y);
 
         control_.Update(cursor_);
-
-        vp_.Pan(cursor_);
-        vp_.Zoom(cursor_);
+        vp_.UpdateCursor(cursor_);
     }
 
     void mouse(int button, int state, int x, int y) {
@@ -212,13 +210,15 @@ namespace display {
     void init(int argc, char **argv) {
 
         glutInit(&argc, argv);
-        glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+        glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
         glutInitWindowSize(window_width_, window_height_);
         glutInitWindowPosition(10, 10);
         glutCreateWindow("Universe Test");
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        glEnable(GL_MULTISAMPLE);
 
         glutDisplayFunc(display);
         glutKeyboardFunc(keyboard);
