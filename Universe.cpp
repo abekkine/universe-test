@@ -6,6 +6,11 @@
 
 Universe::Universe() {
 
+    for (int i=0; i<eiMAX; ++i) {
+        extent_indexes_[(i << 1) + 0] = 0;
+        extent_indexes_[(i << 1) + 1] = 0;
+    }
+
     m_noise.SetOctaveCount(m_params.octaveCount);
     m_noise.SetFrequency(m_params.frequency);
     // m_noise.SetPersistence(0.02);
@@ -99,14 +104,37 @@ void Universe::UpdateCategoryIndex() {
 void Universe::GetStars(const double & centerX, const double & centerY, const double & size, std::vector<StarInfo> & stars) {
 
     const double ds = m_params.stepSize;
-    const double frame_size = ds * floor(0.5 * size / ds);
+
+    extent_indexes_[eiSize] = static_cast<int32_t>(floor(0.5 * size / ds));
+    extent_indexes_[eiBaseX] = static_cast<int>(floor(centerX/ds));
+    extent_indexes_[eiBaseY] = static_cast<int>(floor(centerY/ds));
+
+    bool update_stars = false;
+    for (int i=0; i<eiMAX; ++i) {
+        if (extent_indexes_[i + 0] ^ extent_indexes_[i + eiMAX]) {
+            update_stars = true;
+            break;
+        }
+    }
+
+    for (int i=0; i<eiMAX; ++i) {
+        extent_indexes_[i + eiMAX] = extent_indexes_[i + 0];
+    }
+
+    if (update_stars == false) {
+        return;
+    }
+
+    const double frame_size = ds * static_cast<double>(extent_indexes_[eiSize]);
+    const double base_x = ds * static_cast<double>(extent_indexes_[eiBaseX]);
+    const double base_y = ds * static_cast<double>(extent_indexes_[eiBaseY]);
 
     m_stars.clear();
     int category_index;
     for (double dx=-frame_size; dx<frame_size; dx+=ds) {
         for (double dy=-frame_size; dy<frame_size; dy+=ds) {
-            double x = floor(centerX/ds)*ds + dx;
-            double y = floor(centerY/ds)*ds + dy;
+            double x = base_x + dx;
+            double y = base_y + dy;
             double value = m_noise.GetValue(x, y, m_params.zIndex);
             if (value >= -0.5 && value <= 0.5) {
                 value += 0.5;

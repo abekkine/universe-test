@@ -69,15 +69,15 @@ void wheel_up() {
     }
 }
 
+std::vector<Universe::StarInfo> stars_;
 void render_world() {
 //    TestPattern::World();
     WorldPosition center;
     vp_.GetCenter(center);
     double size = vp_.GetSize();
-    std::vector<Universe::StarInfo> stars;
-    universe_.GetStars(center.x, center.y, size, stars);
-    if (! stars.empty()) {
-        for (auto p : stars) {
+    universe_.GetStars(center.x, center.y, size, stars_);
+    if (! stars_.empty()) {
+        for (auto p : stars_) {
             glPointSize(8.0 * p.size);
             glBegin(GL_POINTS);
             glColor3d(

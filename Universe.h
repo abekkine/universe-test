@@ -8,6 +8,15 @@
 
 class Universe {
 private:
+    enum ExtentIndexEnum {
+        eiSize = 0,
+        eiBaseX = 1,
+        eiBaseY = 2,
+        eiMAX = 3,
+    };
+    int32_t extent_indexes_[2 * eiMAX];
+
+private:
     // 0.7645     M orange-red      (<0.7645) #ff1718
     // 0.121      K orange-yellow   (<0.8855) #ff8445
     // 0.076      G yellow          (<0.9615) #ffa261
