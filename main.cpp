@@ -76,17 +76,17 @@ void render_world() {
     std::vector<Universe::StarInfo> stars;
     universe_.GetStars(center.x, center.y, stars);
     if (! stars.empty()) {
-        glPointSize(8.0);
-        glBegin(GL_POINTS);
         for (auto p : stars) {
-            // Grid point
-            glColor4f(1.0, 0.0, 0.0, 0.2);
-            glVertex2d(p.x, p.y);
-            // Star itself
-            glColor3dv(p.color_ptr);
+            glPointSize(8.0 * p.size);
+            glBegin(GL_POINTS);
+            glColor3d(
+                p.color_ptr[0] + p.color_dev,
+                p.color_ptr[1] + p.color_dev,
+                p.color_ptr[2] + p.color_dev
+            );
             glVertex2d(p.x + p.dx, p.y + p.dy);
+            glEnd();
         }
-        glEnd();
     }
 }
 
@@ -119,16 +119,11 @@ void init_application() {
         wheel_up
     );
 
-    control_.SetPosition(100, window_height_ - 200);
-    control_.SetSize(window_width_ - 200, 100);
-
-    UniverseParameters * params = universe_.getUniverseParams();
-    // control_.AddSliderDouble(&(params->frequency), 0.01, 2.0);
-    // control_.AddSliderInteger(&(params->octaveCount), 1, 8);
-    // control_.AddSliderDouble(&(params->minValue), 0.2, 2.0);
-    // control_.AddSliderDouble(&(params->stepSize), 0.01, 1.0);
-    // control_.AddSliderDouble(&(params->x), -20.0, 20.0);
-    // control_.AddSliderDouble(&(params->y), -20.0, 20.0);
+    control_.SetPosition(50, window_height_ - 400);
+    control_.SetSize(window_width_ - 100, 350);
+    control_.SetUniverse(&universe_);
+    control_.SetViewport(&vp_);
+    control_.Init();
 }
 
 namespace display {
@@ -188,8 +183,7 @@ namespace display {
 
         control_.Update(cursor_);
 
-        vp_.Pan(cursor_);
-        vp_.Zoom(cursor_);
+        vp_.UpdateCursor(cursor_);
     }
 
     void mouse(int button, int state, int x, int y) {
@@ -218,13 +212,15 @@ namespace display {
     void init(int argc, char **argv) {
 
         glutInit(&argc, argv);
-        glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+        glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
         glutInitWindowSize(window_width_, window_height_);
         glutInitWindowPosition(10, 10);
         glutCreateWindow("Universe Test");
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        glEnable(GL_MULTISAMPLE);
 
         glutDisplayFunc(display);
         glutKeyboardFunc(keyboard);

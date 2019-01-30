@@ -6,17 +6,17 @@
 class UiObject {
 public:
     virtual ~UiObject() {}
-    void SetPosition(const ScreenPosition & p) {
+    virtual void SetPosition(const ScreenPosition & p) {
         x_ = p.x;
         y_ = p.y;
     }
-    void SetSize(const int w, const int h) {
+    virtual void SetSize(const int w, const int h) {
         w_ = w;
         h_ = h;
     }
 
 protected:
-    bool isMouseOver(const ScreenPosition & p) {
+    virtual bool isMouseOver(const ScreenPosition & p) {
         return (
             p.y > y_ &&
             p.y < y_ + h_ &&

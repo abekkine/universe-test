@@ -22,6 +22,13 @@ public:
     void GetCenter(WorldPosition & center) {
         center = center_;
     }
+    void GetWorldForCursor(const ScreenPosition & p, WorldPosition & w) {
+        w.x = left_ + p.x * (right_ - left_) / window_width_;
+        w.y = top_ - p.y * (top_ - bottom_) / window_height_;
+    }
+    double GetSize() {
+        return (right_ - left_);
+    }
     void SetWindowSize(const double & w, const double & h) {
         window_width_ = w;
         window_height_ = h;
@@ -37,6 +44,11 @@ public:
         bottom_ = center_.y - 0.5 * pixel_size_ * window_height_;
         top_ = center_.y + 0.5 * pixel_size_ * window_height_;
     }
+    void UpdateCursor(const ScreenPosition & cursor) {
+
+        Pan(cursor);
+        Zoom(cursor);
+    }
     void PanStart(const ScreenPosition & p) {
         pan_mode_ = true;
         pan_start_x_ = p.x;
@@ -46,6 +58,24 @@ public:
     void PanStop() {
         pan_mode_ = false;
     }
+    void ZoomStart(const ScreenPosition & p) {
+        zoom_mode_ = true;
+        zoom_start_distance_ = GetZoomDistance(p.x, p.y);
+        zoom_start_pixel_size_ = pixel_size_;
+    }
+    void ZoomStop() {
+        zoom_mode_ = false;
+    }
+    void ZoomInAt(const ScreenPosition & p) {
+
+        ZoomAt(p, 0.99);
+    }
+    void ZoomOutAt(const ScreenPosition & p) {
+
+        ZoomAt(p, 1.01);
+    }
+
+private:
     void Pan(const ScreenPosition & p) {
         if (pan_mode_ == false) {
             return;
@@ -59,14 +89,6 @@ public:
 
         Update();
     }
-    void ZoomStart(const ScreenPosition & p) {
-        zoom_mode_ = true;
-        zoom_start_distance_ = GetZoomDistance(p.x, p.y);
-        zoom_start_pixel_size_ = pixel_size_;
-    }
-    void ZoomStop() {
-        zoom_mode_ = false;
-    }
     void Zoom(const ScreenPosition & p) {
         if (zoom_mode_ == false) {
             return;
@@ -79,15 +101,7 @@ public:
 
         Update();
     }
-    void ZoomInAt(const ScreenPosition & p) {
 
-        ZoomAt(p, 0.99);
-    }
-    void ZoomOutAt(const ScreenPosition & p) {
-
-        ZoomAt(p, 1.01);
-    }
-private:
     void ZoomAt(const ScreenPosition & p, double ratio) {
 
         double pixel_size_0 = pixel_size_;

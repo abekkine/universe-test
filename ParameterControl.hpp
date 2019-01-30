@@ -4,60 +4,132 @@
 #include "TextRendererFactory.hpp"
 #include "ScreenPosition.hpp"
 #include "UiSlider.hpp"
+#include "Viewport.hpp"
 #include "UniverseParameters.hpp"
+#include "Universe.h"
 
 #include <iostream>
 #include <string>
+#include <vector>
+#include <functional>
 
 #include <GL/glut.h>
-
-enum {
-    e_OCTAVE = 0,
-    e_FREQUENCY,
-    e_X,
-    e_Y,
-    e_MINVALUE,
-    e_STEPSIZE,
-    e_MAXPARAMS,
-};
 
 class ParameterControl {
 public:
     ParameterControl() {
-        params_ = 0;
-        ScreenPosition p;
-
-        // octave count
-        p.Set(50, 50);
-        slider_[e_OCTAVE].SetPosition(p);
-        slider_[e_OCTAVE].SetSize(50, 1500);
-        slider_[e_OCTAVE].SetValuePosition(0);
-        slider_[e_OCTAVE].SetValueLimits(1, 8);
-        // frequency
-        p.Set(100, 50);
-        slider_[e_FREQUENCY].SetPosition(p);
-        slider_[e_FREQUENCY].SetSize(50, 1500);
-        slider_[e_FREQUENCY].SetValuePosition(0);
-        slider_[e_FREQUENCY].SetValueLimits(0.05, 5.0);
-        // x, y
-        // min value
-        // step size
-
-        text_ = TextRendererFactory::getTextRenderer();
-        text_->AddFont(1, "ubuntu_mono.ttf");
-
         x_ = 100;
         y_ = 100;
         width_ = 200;
         height_ = 50;
+
+        world_pos_.Set(0.0, 0.0);
+
+        text_ = TextRendererFactory::getTextRenderer();
+        text_->AddFont(1, "ubuntu_mono.ttf");
     }
     ~ParameterControl() {}
-    void AddSliderDouble(double * var_ptr, double min, double max) {
-        UiSlider * slider = new UiSlider();
+    void SetViewport(Viewport * vp) {
+        vp_ = vp;
     }
-    void RegisterParameters(UniverseParameters * params) {
-        params_ = params;
+    void Init() {
+        ScreenPosition p(50, 50);
+        const int sw = 50;
+        const int sh = 1500;
+        const int xs = 70;
+
+        UiSlider * slider = 0;
+
+        // Shortcut for placeholders
+        using namespace std::placeholders;
+
+        // octave count
+        slider = new UiSlider();
+        slider->SetLabel("OC");
+        slider->SetPosition(p);
+        slider->SetSize(sw, sh);
+        slider->SetInitialValue(universe_->getOctaveCount());
+        slider->SetValueCallback(
+            std::bind(&Universe::setOctaveCount, universe_, _1)
+        );
+        sliders_.push_back(slider);
+
+        // frequency
+        p.x += xs;
+        slider = new UiSlider();
+        slider->SetLabel("FQ");
+        slider->SetPosition(p);
+        slider->SetSize(sw, sh);
+        slider->SetInitialValue(universe_->getFrequency());
+        slider->SetValueCallback(
+            std::bind(&Universe::setFrequency, universe_, _1)
+        );
+        sliders_.push_back(slider);
+
+        // step size
+        p.x += xs;
+        slider = new UiSlider();
+        slider->SetLabel("SS");
+        slider->SetPosition(p);
+        slider->SetSize(sw, sh);
+        slider->SetInitialValue(universe_->getStepSize());
+        slider->SetValueCallback(
+            std::bind(&Universe::setStepSize, universe_, _1)
+        );
+        sliders_.push_back(slider);
+
+        // x, y
+        p.x += xs;
+        slider = new UiSlider();
+        slider->SetLabel("X");
+        slider->SetPosition(p);
+        slider->SetSize(sw, sh);
+        slider->SetInitialValue(universe_->getXPosition());
+        slider->SetValueCallback(
+            std::bind(&Universe::setXPosition, universe_, _1)
+        );
+        sliders_.push_back(slider);
+
+        p.x += xs;
+        slider = new UiSlider();
+        slider->SetLabel("Y");
+        slider->SetPosition(p);
+        slider->SetSize(sw, sh);
+        slider->SetInitialValue(universe_->getYPosition());
+        slider->SetValueCallback(
+            std::bind(&Universe::setYPosition, universe_, _1)
+        );
+        sliders_.push_back(slider);
+
+        // min value
+        p.x += xs;
+        slider = new UiSlider();
+        slider->SetLabel("MV");
+        slider->SetPosition(p);
+        slider->SetSize(sw, sh);
+        slider->SetInitialValue(universe_->getMinValue());
+        slider->SetValueCallback(
+            std::bind(&Universe::setMinValue, universe_, _1)
+        );
+        sliders_.push_back(slider);
+
+        // z index
+        p.x += xs;
+        slider = new UiSlider();
+        slider->SetLabel("ZI");
+        slider->SetPosition(p);
+        slider->SetSize(sw, sh);
+        slider->SetInitialValue(universe_->getZIndex());
+        slider->SetValueCallback(
+            std::bind(&Universe::setZIndex, universe_, _1)
+        );
+        sliders_.push_back(slider);
     }
+
+    void SetUniverse(Universe * universe) {
+        universe_ = universe;
+    }
+
     void SetSize(int w, int h) {
         width_ = w;
         height_ = h;
@@ -67,20 +139,21 @@ public:
         y_ = y;
     }
     void StartSlider(const ScreenPosition & cursor) {
-        for (int i=0; i<e_MAXPARAMS; ++i) {
-            slider_[i].StartSliding(cursor);
+        for (auto s : sliders_) {
+            s->StartSliding(cursor);
         }
     }
     void StopSlider() {
-        for (int i=0; i<e_MAXPARAMS; ++i) {
-            slider_[i].StopSliding();
+        for (auto s : sliders_) {
+            s->StopSliding();
         }
     }
+
     void Update(const ScreenPosition & cursor) {
         cursor_ = cursor;
 
-        for (int i=0; i<e_MAXPARAMS; ++i) {
-            slider_[i].Update(cursor_);
+        for (auto s : sliders_) {
+            s->Update(cursor_);
         }
     }
     void InputSpecialChar(int c) {
@@ -105,25 +178,65 @@ public:
 private:
     void RenderFrame() {
 
-        glColor4f(0.0, 0.0, 1.0, 0.3);
+        glColor4f(0.1, 0.0, 0.0, 0.8);
         glBegin(GL_QUADS);
         glVertex2i(0, 0);
         glVertex2i(width_, 0);
         glVertex2i(width_, height_);
         glVertex2i(0, height_);
         glEnd();
+
+        glColor4f(0.8, 0.5, 0.5, 0.2);
+        glBegin(GL_LINE_LOOP);
+        glVertex2i(0, 0);
+        glVertex2i(width_, 0);
+        glVertex2i(width_, height_);
+        glVertex2i(0, height_);
+        glEnd();
+
+        UniverseParameters params;
+        universe_->GetParameters(params);
+
+        const int tx = 20;
+        const int ts = 40;
+        int ty = 40;
+
+        text_->UseFont(1, 32);
+        glColor3f(1.0, 0.7, 0.7);
+        // First column
+        glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("Octave Count : %d", params.octaveCount);
+        glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("Frequency    : %.8f", params.frequency);
+        glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("(X, Y)       : (%.8f, %.8f)", params.x, params.y);
+        glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("Min Value    : %.8f", params.minValue);
+        glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("Step Size    : %.8f", params.stepSize);
+        glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("Z-Index      : %.8f", params.zIndex);
+        // Second column
+        ty = 40;
+
+        WorldPosition screen_center;
+        vp_->GetCenter(screen_center);
+        vp_->GetWorldForCursor(cursor_, world_pos_);
+        glRasterPos2i(tx + 800, ty); ty += ts;
+        text_->Print("Center @ (%.5f, %.5f)", screen_center.x, screen_center.y);
+        glRasterPos2i(tx + 800, ty); ty += ts;
+        text_->Print("Screen size @ %.5f", vp_->GetSize());
+        glRasterPos2i(tx + 800, ty); ty += ts;
+        text_->Print("Cursor @ (%4d, %4d)", cursor_.x, cursor_.y);
+        glRasterPos2i(tx + 800, ty); ty += ts;
+        text_->Print("World @ (%.4f, %.4f)", world_pos_.x, world_pos_.y);
     }
     void InitSlider() {
     }
     void RenderSlider() {
 
-        for (int i=0; i<e_MAXPARAMS; ++i) {
-            slider_[i].Render();
-
-            // glColor3f(1.0, 1.0, 1.0);
-            // text_->UseFont(1, 32);
-            // glRasterPos2i(200, 100);
-            // text_->Print("%.2f", slider_.GetValue());
+        for (auto s : sliders_) {
+            s->Render();
         }
     }
 
@@ -134,9 +247,10 @@ private:
     int width_, height_;
     std::string input_string_;
     ScreenPosition cursor_;
-
-    UiSlider slider_[e_MAXPARAMS];
-    UniverseParameters * params_;
+    Universe * universe_;
+    WorldPosition world_pos_;
+    std::vector<UiSlider *> sliders_;
+    Viewport * vp_;
 };
 
 #endif // PARAMETER_CONTROL_HPP_
