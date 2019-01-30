@@ -65,7 +65,7 @@ public:
     void GetParameters(UniverseParameters & params) {
         params = m_params;
     }
-    void GetStars(double centerX, double centerY, std::vector<StarInfo> & stars);
+    void GetStars(const double & centerX, const double & centerY, const double & size, std::vector<StarInfo> & stars);
     void SetOctaveCount();
 
     UniverseParameters * getUniverseParams() {

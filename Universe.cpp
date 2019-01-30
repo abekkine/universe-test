@@ -96,10 +96,10 @@ void Universe::UpdateCategoryIndex() {
     }
 }
 
-void Universe::GetStars(double centerX, double centerY, std::vector<StarInfo> & stars) {
+void Universe::GetStars(const double & centerX, const double & centerY, const double & size, std::vector<StarInfo> & stars) {
 
     const double ds = m_params.stepSize;
-    const double frame_size = 15.0;
+    const double frame_size = ds * floor(0.5 * size / ds);
 
     m_stars.clear();
     int category_index;
