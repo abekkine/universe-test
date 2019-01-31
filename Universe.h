@@ -45,7 +45,6 @@ private:
 public:
     struct StarInfo {
         double x, y;
-        double dx, dy;
         float value;
         float color_dev;
         float size;

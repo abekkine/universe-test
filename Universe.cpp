@@ -97,7 +97,6 @@ void Universe::UpdateCategoryIndex() {
     }
     for (int i=0; i<e_NUM_CATEGORIES; ++i) {
         star_categories_[i][0] /= totalNums;
-        std::cout << i << " : " << star_categories_[i][0] << '\n';
     }
 }
 
@@ -143,15 +142,13 @@ void Universe::GetStars(const double & centerX, const double & centerY, const do
                     float size = fabs(m_noise.GetValue(x, y, -4.904)) + 0.4;
                     value = (value - m_params.minValue) / (1.0 - m_params.minValue);
                     StarInfo p;
-                    p.x = x;
-                    p.y = y;
+                    p.x = x + ds * m_noise.GetValue(x, y, m_params.x);
+                    p.y = y + ds * m_noise.GetValue(x, y, m_params.y);
                     p.value = value;
                     category_index = GetCategoryIndex(p.value);
                     p.color_ptr = &star_categories_[category_index][e_COLOR_INDEX];
                     p.color_dev = color_deviation;
                     p.size = size;
-                    p.dx = ds * m_noise.GetValue(p.x, p.y, m_params.x);
-                    p.dy = ds * m_noise.GetValue(p.x, p.y, m_params.y);
                     m_stars.push_back(p);
                 }
             }

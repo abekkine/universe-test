@@ -86,7 +86,7 @@ void render_selection() {
     glPointSize(16.0);
     glColor4f(1.0, 1.0, 0.7, 0.6);
     glBegin(GL_POINTS);
-    glVertex2d(selected_star_.x + selected_star_.dx, selected_star_.y + selected_star_.dy);
+    glVertex2d(selected_star_.x, selected_star_.y);
     glEnd();
 }
 
@@ -108,7 +108,7 @@ void render_world() {
                 p.color_ptr[1] + p.color_dev,
                 p.color_ptr[2] + p.color_dev
             );
-            glVertex2d(p.x + p.dx, p.y + p.dy);
+            glVertex2d(p.x, p.y);
             glEnd();
         }
     }
@@ -135,7 +135,7 @@ void update_selection() {
     selected_ = false;
     for (auto s : stars_) {
 
-        const double distance = distance_square(w_cursor_position, WorldPosition(s.x + s.dx, s.y + s.dy));
+        const double distance = distance_square(w_cursor_position, WorldPosition(s.x, s.y));
         if (distance < (5.0 * vp_.GetPixelSize())) {
             selected_star_ = s;
             selected_ = true;
