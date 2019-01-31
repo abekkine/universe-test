@@ -207,28 +207,15 @@ private:
         glRasterPos2i(tx, ty); ty += ts;
         text_->Print("Frequency    : %.8f", params.frequency);
         glRasterPos2i(tx, ty); ty += ts;
-        text_->Print("(X, Y)       : (%.8f, %.8f)", params.x, params.y);
+        text_->Print("X            : %.8f", params.x);
+        glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("Y            : %.8f", params.y);
         glRasterPos2i(tx, ty); ty += ts;
         text_->Print("Min Value    : %.8f", params.minValue);
         glRasterPos2i(tx, ty); ty += ts;
         text_->Print("Step Size    : %.8f", params.stepSize);
         glRasterPos2i(tx, ty); ty += ts;
         text_->Print("Z-Index      : %.8f", params.zIndex);
-        // Second column
-        ty = 40;
-
-        WorldPosition w_screen_center;
-        WorldPosition w_cursor_position;
-        vp_->GetCenter(w_screen_center);
-        vp_->GetWorldForCursor(cursor_, w_cursor_position);
-        glRasterPos2i(tx + 800, ty); ty += ts;
-        text_->Print("Center @ (%.5f, %.5f)", w_screen_center.x, w_screen_center.y);
-        glRasterPos2i(tx + 800, ty); ty += ts;
-        text_->Print("Screen size @ %.5f", vp_->GetSize());
-        glRasterPos2i(tx + 800, ty); ty += ts;
-        text_->Print("Cursor @ (%4d, %4d)", cursor_.x, cursor_.y);
-        glRasterPos2i(tx + 800, ty); ty += ts;
-        text_->Print("World @ (%.4f, %.4f)", w_cursor_position.x, w_cursor_position.y);
     }
     void InitSlider() {
     }

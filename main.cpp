@@ -3,6 +3,7 @@
 #include "ButtonProcessor.hpp"
 #include "ScreenPosition.hpp"
 #include "ParameterControl.hpp"
+#include "TextRendererFactory.hpp"
 #include "Universe.h"
 
 #include <GL/glut.h>
@@ -36,8 +37,11 @@ Viewport vp_;
 // -- universe
 Universe universe_;
 
-// -- command console
+// -- parameter value controller
 ParameterControl control_;
+
+// -- text
+TextRendererInterface * text_ = 0;
 
 void left_mouse_down() {
     control_.StartSlider(cursor_);
@@ -114,10 +118,96 @@ void render_world() {
     }
 }
 
+void render_position_info() {
+    const int pw = 700;
+    const int ph = 300;
+    const int px = window_width_ - pw - 20;
+    const int py = window_height_ - ph - 20;
+    const int mg = 10;
+
+    text_->UseFont(2, 40);
+
+    glPushMatrix();
+    glLoadIdentity();
+
+    glColor4f(0.5, 1.0, 0.5, 0.5);
+    glLineWidth(1.0);
+    glBegin(GL_LINE_LOOP);
+    glVertex2i(px, py);
+    glVertex2i(px + pw, py);
+    glVertex2i(px + pw, py + ph);
+    glVertex2i(px, py + ph);
+    glEnd();
+
+    glColor3d(0.5, 1.0, 0.5);
+    int ty = py + 5*mg;
+    const int tx = px + 2*mg;
+    const int ts = 50;
+
+    WorldPosition w_screen_center;
+    WorldPosition w_cursor_position;
+    vp_.GetCenter(w_screen_center);
+    vp_.GetWorldForCursor(cursor_, w_cursor_position);
+    glRasterPos2i(tx, ty); ty += ts;
+    text_->Print("Center @ (%.5f, %.5f)", w_screen_center.x, w_screen_center.y);
+    glRasterPos2i(tx, ty); ty += ts;
+    text_->Print("Screen size @ %.5f", vp_.GetSize());
+    glRasterPos2i(tx, ty); ty += ts;
+    text_->Print("Cursor @ (%4d, %4d)", cursor_.x, cursor_.y);
+    glRasterPos2i(tx, ty); ty += ts;
+    text_->Print("World @ (%.4f, %.4f)", w_cursor_position.x, w_cursor_position.y);
+
+    glPopMatrix();
+}
+
+void render_star_info() {
+
+    const int pw = 700;
+    const int ph = 300;
+    const int px = window_width_ - 2 * (pw + 20);
+    const int py = window_height_ - ph - 20;
+    const int mg = 10;
+
+    text_->UseFont(2, 40);
+
+    glPushMatrix();
+    glLoadIdentity();
+
+    glColor4f(0.5, 0.5, 1.0, 0.5);
+    glLineWidth(1.0);
+    glBegin(GL_LINE_LOOP);
+    glVertex2i(px, py);
+    glVertex2i(px + pw, py);
+    glVertex2i(px + pw, py + ph);
+    glVertex2i(px, py + ph);
+    glEnd();
+
+    glColor3d(0.5, 0.5, 1.0);
+    int ty = py + 5*mg;
+    const int tx = px + 2*mg;
+    const int ts = 50;
+
+    glRasterPos2i(tx, ty); ty += ts;
+    text_->Print("Star Info");
+    if (selected_) {
+        glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("Pos(%.4f, %.4f)", selected_star_.x, selected_star_.y);
+        glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("Val(%.6f)", selected_star_.value);
+        glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("Size(%.2f)", selected_star_.size);
+    }
+    glPopMatrix();
+}
+
 void render_ui() {
     TestPattern::Ui(window_width_, window_height_);
 
     control_.Render();
+
+    render_position_info();
+
+    render_star_info();
 }
 
 double distance_square(const WorldPosition & p1, const WorldPosition & p2) {
@@ -146,6 +236,9 @@ void update_selection() {
 
 void init_application() {
 
+    text_ = TextRendererFactory::getTextRenderer();
+    text_->AddFont(2, "ubuntu_mono.ttf");
+
     vp_.SetWindowSize(window_width_, window_height_);
 
     left_mouse_processor_.RegisterHandlers(
@@ -168,8 +261,8 @@ void init_application() {
         wheel_up
     );
 
-    control_.SetPosition(50, window_height_ - 400);
-    control_.SetSize(window_width_ - 100, 350);
+    control_.SetPosition(46, window_height_ - 400);
+    control_.SetSize(478, 350);
     control_.SetUniverse(&universe_);
     control_.SetViewport(&vp_);
     control_.Init();
