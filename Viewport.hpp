@@ -29,6 +29,9 @@ public:
     double GetSize() {
         return (right_ - left_);
     }
+    double GetPixelSize() {
+        return pixel_size_;
+    }
     void SetWindowSize(const double & w, const double & h) {
         window_width_ = w;
         window_height_ = h;

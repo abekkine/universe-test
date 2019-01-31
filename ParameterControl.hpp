@@ -23,8 +23,6 @@ public:
         width_ = 200;
         height_ = 50;
 
-        world_pos_.Set(0.0, 0.0);
-
         text_ = TextRendererFactory::getTextRenderer();
         text_->AddFont(1, "ubuntu_mono.ttf");
     }
@@ -219,17 +217,18 @@ private:
         // Second column
         ty = 40;
 
-        WorldPosition screen_center;
-        vp_->GetCenter(screen_center);
-        vp_->GetWorldForCursor(cursor_, world_pos_);
+        WorldPosition w_screen_center;
+        WorldPosition w_cursor_position;
+        vp_->GetCenter(w_screen_center);
+        vp_->GetWorldForCursor(cursor_, w_cursor_position);
         glRasterPos2i(tx + 800, ty); ty += ts;
-        text_->Print("Center @ (%.5f, %.5f)", screen_center.x, screen_center.y);
+        text_->Print("Center @ (%.5f, %.5f)", w_screen_center.x, w_screen_center.y);
         glRasterPos2i(tx + 800, ty); ty += ts;
         text_->Print("Screen size @ %.5f", vp_->GetSize());
         glRasterPos2i(tx + 800, ty); ty += ts;
         text_->Print("Cursor @ (%4d, %4d)", cursor_.x, cursor_.y);
         glRasterPos2i(tx + 800, ty); ty += ts;
-        text_->Print("World @ (%.4f, %.4f)", world_pos_.x, world_pos_.y);
+        text_->Print("World @ (%.4f, %.4f)", w_cursor_position.x, w_cursor_position.y);
     }
     void InitSlider() {
     }
@@ -248,7 +247,6 @@ private:
     std::string input_string_;
     ScreenPosition cursor_;
     Universe * universe_;
-    WorldPosition world_pos_;
     std::vector<UiSlider *> sliders_;
     Viewport * vp_;
 };

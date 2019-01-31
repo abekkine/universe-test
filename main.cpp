@@ -6,10 +6,18 @@
 #include "Universe.h"
 
 #include <GL/glut.h>
+#include <math.h>
 
 // Variables
+// -- stars from universe
+std::vector<Universe::StarInfo> stars_;
+
 // -- cursor position
 ScreenPosition cursor_;
+
+// -- selection
+Universe::StarInfo selected_star_;
+bool selected_;
 
 // -- mouse button & state
 ButtonProcessor left_mouse_processor_;
@@ -69,14 +77,29 @@ void wheel_up() {
     }
 }
 
-std::vector<Universe::StarInfo> stars_;
+void render_selection() {
+
+    if (!selected_) {
+        return;
+    }
+
+    glPointSize(16.0);
+    glColor4f(1.0, 1.0, 0.7, 0.6);
+    glBegin(GL_POINTS);
+    glVertex2d(selected_star_.x + selected_star_.dx, selected_star_.y + selected_star_.dy);
+    glEnd();
+}
+
 void render_world() {
-//    TestPattern::World();
+    // TestPattern::World();
     WorldPosition center;
     vp_.GetCenter(center);
     double size = vp_.GetSize();
     universe_.GetStars(center.x, center.y, size, stars_);
     if (! stars_.empty()) {
+
+        render_selection();
+
         for (auto p : stars_) {
             glPointSize(8.0 * p.size);
             glBegin(GL_POINTS);
@@ -97,7 +120,32 @@ void render_ui() {
     control_.Render();
 }
 
+double distance_square(const WorldPosition & p1, const WorldPosition & p2) {
+    const double dx = p1.x - p2.x;
+    const double dy = p1.y - p2.y;
+
+    return sqrt(dx*dx + dy*dy);
+}
+
+void update_selection() {
+
+    WorldPosition w_cursor_position;
+    vp_.GetWorldForCursor(cursor_, w_cursor_position);
+
+    selected_ = false;
+    for (auto s : stars_) {
+
+        const double distance = distance_square(w_cursor_position, WorldPosition(s.x + s.dx, s.y + s.dy));
+        if (distance < (5.0 * vp_.GetPixelSize())) {
+            selected_star_ = s;
+            selected_ = true;
+            break;
+        }
+    }
+}
+
 void init_application() {
+
     vp_.SetWindowSize(window_width_, window_height_);
 
     left_mouse_processor_.RegisterHandlers(
@@ -183,6 +231,8 @@ namespace display {
         cursor_.Set(x, y);
 
         control_.Update(cursor_);
+
+        update_selection();
 
         vp_.UpdateCursor(cursor_);
     }
