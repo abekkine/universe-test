@@ -26,29 +26,29 @@ private:
     // 0.00000003 O blue            (<0.9996) #629afa
     // --         Neutron Star      (<0.9999) #2050e0
     // --         Black Hole      (otherwise) #000040, #800080
-    enum {
-        e_NUM_CATEGORIES = 9,
-        e_PROB_INDEX = 0,
-        e_COLOR_INDEX = 1,
-    };
-    double star_categories_[e_NUM_CATEGORIES][4] = {
-        {0.2, 1.000, 0.090, 0.094}, // #ff1718
-        {0.3, 1.000, 0.518, 0.271}, // #ff8445
-        {0.4, 1.000, 0.635, 0.380}, // #ffa261
-        {0.5, 1.000, 0.839, 0.667}, // #ffd6aa
-        {0.6, 1.000, 1.000, 1.000}, // #ffffff
-        {0.7, 0.847, 0.914, 0.996}, // #d8e9fe
-        {0.8, 0.384, 0.604, 0.980}, // #629afa
-        {0.9, 0.126, 0.314, 0.878}, // #2050e0
-        {1.0, 0.000, 0.000, 0.250}  // #000040
-    };
+    // enum {
+    //     e_NUM_CATEGORIES = 9,
+    //     e_PROB_INDEX = 0,
+    //     e_COLOR_INDEX = 1,
+    // };
+    // double star_categories_[e_NUM_CATEGORIES][4] = {
+    //     {0.2, 1.000, 0.090, 0.094}, // #ff1718
+    //     {0.3, 1.000, 0.518, 0.271}, // #ff8445
+    //     {0.4, 1.000, 0.635, 0.380}, // #ffa261
+    //     {0.5, 1.000, 0.839, 0.667}, // #ffd6aa
+    //     {0.6, 1.000, 1.000, 1.000}, // #ffffff
+    //     {0.7, 0.847, 0.914, 0.996}, // #d8e9fe
+    //     {0.8, 0.384, 0.604, 0.980}, // #629afa
+    //     {0.9, 0.126, 0.314, 0.878}, // #2050e0
+    //     {1.0, 0.000, 0.000, 0.250}  // #000040
+    // };
 public:
     struct StarInfo {
         double x, y;
         float value;
         float color_dev;
         float size;
-        double *color_ptr;
+        float *color_ptr;
     };
 
 public: // setters

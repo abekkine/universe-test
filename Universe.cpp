@@ -1,8 +1,11 @@
 #include "Universe.h"
+#include "StarCategory.h"
 
 #include <math.h>
 
 #include <iostream>
+
+extern StarCategory star_categories_[e_NUM_CATEGORIES];
 
 Universe::Universe() {
 
@@ -71,33 +74,33 @@ double Universe::getZIndex() {
 }
 
 void Universe::UpdateCategoryIndex() {
-    double totalNums = m_params.numBHs +
-        m_params.numNSs +
-        m_params.numOs +
-        m_params.numBs +
-        m_params.numAs +
-        m_params.numFs +
-        m_params.numGs +
-        m_params.numKs +
-        m_params.numMs;
-
-    star_categories_[0][0] = m_params.numMs;
-    star_categories_[1][0] = m_params.numKs;
-    star_categories_[2][0] = m_params.numGs;
-    star_categories_[3][0] = m_params.numFs;
-    star_categories_[4][0] = m_params.numAs;
-    star_categories_[5][0] = m_params.numBs;
-    star_categories_[6][0] = m_params.numOs;
-    star_categories_[7][0] = m_params.numNSs;
-    star_categories_[8][0] = m_params.numBHs;
-
-    for (int i=1; i<e_NUM_CATEGORIES; ++i){
-        star_categories_[i][0] += star_categories_[i-1][0];
-
-    }
-    for (int i=0; i<e_NUM_CATEGORIES; ++i) {
-        star_categories_[i][0] /= totalNums;
-    }
+    // double totalNums = m_params.numBHs +
+    //     m_params.numNSs +
+    //     m_params.numOs +
+    //     m_params.numBs +
+    //     m_params.numAs +
+    //     m_params.numFs +
+    //     m_params.numGs +
+    //     m_params.numKs +
+    //     m_params.numMs;
+    //
+    // star_categories_[0][0] = m_params.numMs;
+    // star_categories_[1][0] = m_params.numKs;
+    // star_categories_[2][0] = m_params.numGs;
+    // star_categories_[3][0] = m_params.numFs;
+    // star_categories_[4][0] = m_params.numAs;
+    // star_categories_[5][0] = m_params.numBs;
+    // star_categories_[6][0] = m_params.numOs;
+    // star_categories_[7][0] = m_params.numNSs;
+    // star_categories_[8][0] = m_params.numBHs;
+    //
+    // for (int i=1; i<e_NUM_CATEGORIES; ++i){
+    //     star_categories_[i][0] += star_categories_[i-1][0];
+    //
+    // }
+    // for (int i=0; i<e_NUM_CATEGORIES; ++i) {
+    //     star_categories_[i][0] /= totalNums;
+    // }
 }
 
 void Universe::GetStars(const double & centerX, const double & centerY, const double & size, std::vector<StarInfo> & stars) {
@@ -146,7 +149,8 @@ void Universe::GetStars(const double & centerX, const double & centerY, const do
                     p.y = y + ds * m_noise.GetValue(x, y, m_params.y);
                     p.value = value;
                     category_index = GetCategoryIndex(p.value);
-                    p.color_ptr = &star_categories_[category_index][e_COLOR_INDEX];
+                    // p.color_ptr = &star_categories_[category_index][e_COLOR_INDEX];
+                    p.color_ptr = star_categories_[category_index].baseColor;
                     p.color_dev = color_deviation;
                     p.size = size;
                     m_stars.push_back(p);
@@ -161,7 +165,8 @@ void Universe::GetStars(const double & centerX, const double & centerY, const do
 int Universe::GetCategoryIndex(double value) {
     int ix = e_NUM_CATEGORIES-1;
     for (int i=0; i<e_NUM_CATEGORIES-1; ++i) {
-        if (value < star_categories_[i][e_PROB_INDEX]) {
+        // if (value < star_categories_[i][e_PROB_INDEX]) {
+        if (value < star_categories_[i].abundance) {
             ix = i;
             break;
         }
