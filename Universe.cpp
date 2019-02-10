@@ -74,33 +74,31 @@ double Universe::getZIndex() {
 }
 
 void Universe::UpdateCategoryIndex() {
-    // double totalNums = m_params.numBHs +
-    //     m_params.numNSs +
-    //     m_params.numOs +
-    //     m_params.numBs +
-    //     m_params.numAs +
-    //     m_params.numFs +
-    //     m_params.numGs +
-    //     m_params.numKs +
-    //     m_params.numMs;
-    //
-    // star_categories_[0][0] = m_params.numMs;
-    // star_categories_[1][0] = m_params.numKs;
-    // star_categories_[2][0] = m_params.numGs;
-    // star_categories_[3][0] = m_params.numFs;
-    // star_categories_[4][0] = m_params.numAs;
-    // star_categories_[5][0] = m_params.numBs;
-    // star_categories_[6][0] = m_params.numOs;
-    // star_categories_[7][0] = m_params.numNSs;
-    // star_categories_[8][0] = m_params.numBHs;
-    //
-    // for (int i=1; i<e_NUM_CATEGORIES; ++i){
-    //     star_categories_[i][0] += star_categories_[i-1][0];
-    //
-    // }
-    // for (int i=0; i<e_NUM_CATEGORIES; ++i) {
-    //     star_categories_[i][0] /= totalNums;
-    // }
+#ifndef USE_REAL_ABUNDANCES
+    const double base = 1.2;
+    const double scaleFactor = (base - 1.0) / (pow(base, (double)(e_NUM_CATEGORIES)) - 1.0);
+    double power = 0.0;
+    double sum = 0.0;
+    for (int i=e_NUM_CATEGORIES-1; i>0; --i) {
+        sum += pow(base, (double)i);
+        star_categories_[e_NUM_CATEGORIES - i - 1].abundance = sum * scaleFactor;
+    }
+    star_categories_[e_NUM_CATEGORIES - 1].abundance = 1.0;
+#endif // USE_REAL_ABUNDANCES
+}
+
+bool Universe::GenerateStarAt(const double & x, const double & y, const double & value, StarInfo & p) {
+    int category_index;
+    float color_deviation = m_noise.GetValue(x, y, 19.781) * 0.2;
+    float size = fabs(m_noise.GetValue(x, y, -4.904)) + 0.4;
+    double norm_value = (value - m_params.minValue) / (1.0 - m_params.minValue);
+    p.x = x;
+    p.y = y;
+    p.value = norm_value;
+    category_index = GetCategoryIndex(p.value);
+    p.color_ptr = star_categories_[category_index].baseColor;
+    p.color_dev = color_deviation;
+    p.size = size;
 }
 
 void Universe::GetStars(const double & centerX, const double & centerY, const double & size, std::vector<StarInfo> & stars) {
@@ -132,7 +130,6 @@ void Universe::GetStars(const double & centerX, const double & centerY, const do
     const double base_y = ds * static_cast<double>(extent_indexes_[eiBaseY]);
 
     m_stars.clear();
-    int category_index;
     for (double dx=-frame_size; dx<frame_size; dx+=ds) {
         for (double dy=-frame_size; dy<frame_size; dy+=ds) {
             double x = base_x + dx;
@@ -141,18 +138,10 @@ void Universe::GetStars(const double & centerX, const double & centerY, const do
             if (value >= -0.5 && value <= 0.5) {
                 value += 0.5;
                 if (value > m_params.minValue) {
-                    float color_deviation = m_noise.GetValue(x, y, 19.781) * 0.2;
-                    float size = fabs(m_noise.GetValue(x, y, -4.904)) + 0.4;
-                    value = (value - m_params.minValue) / (1.0 - m_params.minValue);
                     StarInfo p;
-                    p.x = x + ds * m_noise.GetValue(x, y, m_params.x);
-                    p.y = y + ds * m_noise.GetValue(x, y, m_params.y);
-                    p.value = value;
-                    category_index = GetCategoryIndex(p.value);
-                    // p.color_ptr = &star_categories_[category_index][e_COLOR_INDEX];
-                    p.color_ptr = star_categories_[category_index].baseColor;
-                    p.color_dev = color_deviation;
-                    p.size = size;
+                    double star_x = x + ds * m_noise.GetValue(x, y, m_params.x);
+                    double star_y = y + ds * m_noise.GetValue(x, y, m_params.y);
+                    GenerateStarAt(star_x, star_y, value, p);
                     m_stars.push_back(p);
                 }
             }
@@ -165,7 +154,6 @@ void Universe::GetStars(const double & centerX, const double & centerY, const do
 int Universe::GetCategoryIndex(double value) {
     int ix = e_NUM_CATEGORIES-1;
     for (int i=0; i<e_NUM_CATEGORIES-1; ++i) {
-        // if (value < star_categories_[i][e_PROB_INDEX]) {
         if (value < star_categories_[i].abundance) {
             ix = i;
             break;

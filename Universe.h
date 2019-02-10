@@ -83,6 +83,7 @@ public:
 private:
     void UpdateCategoryIndex();
     int GetCategoryIndex(double value);
+    bool GenerateStarAt(const double & x, const double & y, const double & value, StarInfo & p);
 
 private:
     noise::module::Perlin m_noise;
