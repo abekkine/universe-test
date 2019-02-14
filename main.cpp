@@ -102,10 +102,8 @@ void render_world() {
     universe_.GetStars(center.x, center.y, size, stars_);
     if (! stars_.empty()) {
 
-        render_selection();
-
         for (auto p : stars_) {
-            glPointSize(8.0 * p.size);
+            glPointSize(8.0 * p.radius);
             glBegin(GL_POINTS);
             glColor3fv(p.color_ptr);
             // glColor3d(
@@ -116,6 +114,7 @@ void render_world() {
             glVertex2d(p.x, p.y);
             glEnd();
         }
+        render_selection();
     }
 }
 
@@ -161,6 +160,13 @@ void render_position_info() {
     glPopMatrix();
 }
 
+char giantLabels[][12] = {
+    "",
+    "Main",
+    "Giant",
+    "SuperGiant"
+};
+
 void render_star_info() {
 
     const int pw = 700;
@@ -192,11 +198,16 @@ void render_star_info() {
     text_->Print("Star Info");
     if (selected_) {
         glRasterPos2i(tx, ty); ty += ts;
+        text_->Print("%s [%s]"
+            , selected_star_.cat_name.c_str()
+            , giantLabels[selected_star_.cat_type]
+        );
+        glRasterPos2i(tx, ty); ty += ts;
         text_->Print("Pos(%.4f, %.4f)", selected_star_.x, selected_star_.y);
         glRasterPos2i(tx, ty); ty += ts;
-        text_->Print("Val(%.6f)", selected_star_.value);
+        text_->Print("Mass(%.3f)", selected_star_.mass);
         glRasterPos2i(tx, ty); ty += ts;
-        text_->Print("Size(%.2f)", selected_star_.size);
+        text_->Print("Size(%.2f)", selected_star_.radius);
     }
     glPopMatrix();
 }
