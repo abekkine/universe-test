@@ -155,7 +155,7 @@ public:
         }
     }
     void InputSpecialChar(int c) {
-        // TODO
+        // No special chars processed for now.
     }
     void InputRegularChar(char c) {
         input_string_ += c;
