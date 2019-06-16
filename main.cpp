@@ -4,6 +4,7 @@
 #include "ScreenPosition.hpp"
 #include "ParameterControl.hpp"
 #include "TextRendererFactory.hpp"
+#include "StarInterface.h"
 #include "Universe.h"
 
 #include <GL/glut.h>
@@ -11,13 +12,13 @@
 
 // Variables
 // -- stars from universe
-std::vector<Universe::StarInfo> stars_;
+StarCollectionType stars_;
 
 // -- cursor position
 ScreenPosition cursor_;
 
 // -- selection
-Universe::StarInfo selected_star_;
+StarInterface * selected_star_ = 0;
 bool selected_;
 
 // -- mouse button & state
@@ -35,7 +36,7 @@ static const int MAX_BUFFER = 1024;
 Viewport vp_;
 
 // -- universe
-Universe universe_;
+Universe * universe_ = 0;
 
 // -- parameter value controller
 ParameterControl control_;
@@ -87,31 +88,33 @@ void render_selection() {
         return;
     }
 
+    double x, y;
+    selected_star_->GetPosition(x, y);
+
     glPointSize(16.0);
     glColor4f(1.0, 1.0, 0.7, 0.6);
     glBegin(GL_POINTS);
-    glVertex2d(selected_star_.x, selected_star_.y);
+    glVertex2d(x, y);
     glEnd();
 }
 
 void render_world() {
     // TestPattern::World();
+    if (universe_ == 0) return;
+
     WorldPosition center;
     vp_.GetCenter(center);
     double size = vp_.GetSize();
-    universe_.GetStars(center.x, center.y, size, stars_);
+    universe_->GetStars(center.x, center.y, size, stars_);
     if (! stars_.empty()) {
 
+        double x, y;
         for (auto p : stars_) {
-            glPointSize(8.0 * p.radius);
+            p->GetPosition(x, y);
+            glPointSize(8.0 * p->GetRadius());
             glBegin(GL_POINTS);
-            glColor3fv(p.color_ptr);
-            // glColor3d(
-            //     p.color_ptr[0] + p.color_dev,
-            //     p.color_ptr[1] + p.color_dev,
-            //     p.color_ptr[2] + p.color_dev
-            // );
-            glVertex2d(p.x, p.y);
+            glColor3fv(p->GetColor());
+            glVertex2d(x, y);
             glEnd();
         }
         render_selection();
@@ -199,15 +202,17 @@ void render_star_info() {
     if (selected_) {
         glRasterPos2i(tx, ty); ty += ts;
         text_->Print("%s [%s]"
-            , selected_star_.cat_name.c_str()
-            , giantLabels[selected_star_.cat_type]
+            , selected_star_->GetName().c_str()
+            , giantLabels[selected_star_->GetType()]
         );
+        double x, y;
+        selected_star_->GetPosition(x, y);
         glRasterPos2i(tx, ty); ty += ts;
-        text_->Print("Pos(%.4f, %.4f)", selected_star_.x, selected_star_.y);
+        text_->Print("Pos(%.4f, %.4f)", x, y);
         glRasterPos2i(tx, ty); ty += ts;
-        text_->Print("Mass(%.3f)", selected_star_.mass);
+        text_->Print("Mass(%.3f)", selected_star_->GetMass());
         glRasterPos2i(tx, ty); ty += ts;
-        text_->Print("Size(%.2f)", selected_star_.radius);
+        text_->Print("Size(%.2f)", selected_star_->GetRadius());
     }
     glPopMatrix();
 }
@@ -237,7 +242,9 @@ void update_selection() {
     selected_ = false;
     for (auto s : stars_) {
 
-        const double distance = distance_square(w_cursor_position, WorldPosition(s.x, s.y));
+        double sx, sy;
+        s->GetPosition(sx, sy);
+        const double distance = distance_square(w_cursor_position, WorldPosition(sx, sy));
         if (distance < (5.0 * vp_.GetPixelSize())) {
             selected_star_ = s;
             selected_ = true;
@@ -247,6 +254,8 @@ void update_selection() {
 }
 
 void init_application() {
+
+    universe_ = new Universe();
 
     text_ = TextRendererFactory::getTextRenderer();
     text_->AddFont(2, "ubuntu_mono.ttf");
@@ -275,7 +284,7 @@ void init_application() {
 
     control_.SetPosition(46, window_height_ - 400);
     control_.SetSize(478, 350);
-    control_.SetUniverse(&universe_);
+    control_.SetUniverse(universe_);
     control_.SetViewport(&vp_);
     control_.Init();
 }

@@ -96,27 +96,31 @@ void Universe::UpdateCategoryIndex() {
 #endif // USE_REAL_ABUNDANCES
 }
 
-bool Universe::GenerateStarAt(const double & x, const double & y, StarInfo & p) {
-    std::mt19937 gen(1000000.0 * p.seed);
+bool Universe::GenerateStarAt(const double & x, const double & y, StarInfo * p) {
+    std::mt19937 gen(1000000.0 * p->seed);
     std::uniform_real_distribution<> dis(-1.0, 1.0);
     int category_index;
     float color_deviation = m_noise.GetValue(x, y, 19.781) * 0.2;
-    p.x = x + m_params.stepSize * dis(gen);
-    p.y = y + m_params.stepSize * dis(gen);
-    category_index = GetCategoryIndex(p.seed);
+    p->x = x + m_params.stepSize * dis(gen);
+    p->y = y + m_params.stepSize * dis(gen);
+    category_index = GetCategoryIndex(p->seed);
     double rMin = star_categories_[category_index].minRadius;
     double rMax = star_categories_[category_index].maxRadius;
     double mMin = star_categories_[category_index].minMass;
     double mMax = star_categories_[category_index].maxMass;
-    p.radius = 0.01 * 0.5 * (rMax + rMin + dis(gen) * (rMax - rMin));
-    p.mass = 0.5 * (mMax + mMin + dis(gen) * (mMax - mMin));
-    p.cat_name = star_categories_[category_index].name;
-    p.cat_type = star_categories_[category_index].type;
-    p.color_ptr = star_categories_[category_index].baseColor;
-    p.color_dev = color_deviation;
+    p->radius = 0.01 * 0.5 * (rMax + rMin + dis(gen) * (rMax - rMin));
+    p->mass = 0.5 * (mMax + mMin + dis(gen) * (mMax - mMin));
+    p->cat_name = star_categories_[category_index].name;
+    p->cat_type = star_categories_[category_index].type;
+    p->color_ptr = star_categories_[category_index].baseColor;
+    p->color_dev = color_deviation;
 }
 
-void Universe::GetStars(const double & centerX, const double & centerY, const double & size, std::vector<StarInfo> & stars) {
+void Universe::GetStars(
+    const double & centerX,
+    const double & centerY,
+    const double & distance,
+    StarCollectionType & stars) {
 
     const double ds = m_params.stepSize;
 
@@ -124,7 +128,7 @@ void Universe::GetStars(const double & centerX, const double & centerY, const do
         force_update_ = false;
     }
     else {
-        extent_indexes_[eiSize] = static_cast<int32_t>(floor(0.5 * size / ds));
+        extent_indexes_[eiSize] = static_cast<int32_t>(floor(0.5 * distance / ds));
         extent_indexes_[eiBaseX] = static_cast<int>(floor(centerX/ds));
         extent_indexes_[eiBaseY] = static_cast<int>(floor(centerY/ds));
 
@@ -163,8 +167,8 @@ void Universe::GetStars(const double & centerX, const double & centerY, const do
             if (value >= -0.5 && value <= 0.5) {
                 value += 0.5;
                 if (value > m_params.minValue) {
-                    StarInfo p;
-                    p.seed = value;
+                    StarInfo * p = new StarInfo();
+                    p->seed = value;
                     GenerateStarAt(x, y, p);
                     m_stars.push_back(p);
                 }
