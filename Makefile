@@ -1,4 +1,4 @@
-TARGET=universe
+TARGET=universe.bin
 SRCS=$(wildcard *.cpp)
 OBJS=$(SRCS:%.cpp=%.o)
 CXXFLAGS  = -g -std=c++11
@@ -15,4 +15,4 @@ all: $(OBJS)
 	$(CXX) $(CXXFLAGS) -c -o $*.o $<
 
 clean:
-	$(RM) $(TARGET) $(OBJS) *~ core*
+	$(RM) $(TARGET) $(OBJS) *~ core* *.gch
