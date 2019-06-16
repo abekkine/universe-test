@@ -1,3 +1,4 @@
+// Copyright [2019] A.Bekkine
 #ifndef PARAMETER_CONTROL_HPP_
 #define PARAMETER_CONTROL_HPP_
 
