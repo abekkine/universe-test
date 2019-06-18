@@ -109,9 +109,11 @@ void render_world() {
     if (! stars_.empty()) {
 
         double x, y;
+        double logSize;
         for (auto p : stars_) {
             p->GetPosition(x, y);
-            glPointSize(8.0 * p->GetRadius());
+            logSize = 1.0 + log(8.0 * p->GetRadius()) / log(2);
+            glPointSize(logSize);
             glBegin(GL_POINTS);
             glColor3fv(p->GetColor());
             glVertex2d(x, y);
