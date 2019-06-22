@@ -3,8 +3,10 @@
 
 #include "StarInterface.h"
 #include "StarCategory.h"
+#include "PlanetInterface.h"
 
 #include <string>
+#include <vector>
 
 class StarInfo : public StarInterface {
 public:
@@ -26,6 +28,9 @@ public:
     }
     float GetMass() {
         return mass;
+    }
+    void GeneratePlanets() {
+        // TODO
     }
 
 public:
@@ -52,6 +57,7 @@ public:
         float color_dev;
         float radius;
         float mass;
+        std::vector<PlanetInterface *> planets_;
 
 private:
         float color_[4];
