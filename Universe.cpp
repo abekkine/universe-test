@@ -62,7 +62,7 @@ void Universe::GetStars(
 
     const double ds = m_params.stepSize.value;
 
-    if (m_params.CheckUpdate()) {
+    if (!m_params.CheckUpdate()) {
         extent_indexes_[eiSize] = static_cast<int32_t>(floor(0.5 * distance / ds));
         extent_indexes_[eiBaseX] = static_cast<int>(floor(centerX/ds));
         extent_indexes_[eiBaseY] = static_cast<int>(floor(centerY/ds));
