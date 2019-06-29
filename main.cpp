@@ -22,7 +22,6 @@ StarInterface * selected_star_ = 0;
 bool selected_;
 
 // -- mouse button & state
-ButtonProcessor left_mouse_processor_;
 ButtonProcessor right_mouse_processor_;
 ButtonProcessor middle_mouse_processor_;
 ButtonProcessor scroll_wheel_processor_;
@@ -43,14 +42,6 @@ ParameterControl control_;
 
 // -- text
 TextRendererInterface * text_ = 0;
-
-void left_mouse_down() {
-    control_.StartSlider(cursor_);
-}
-
-void left_mouse_up() {
-    control_.StopSlider();
-}
 
 void right_mouse_down() {
     vp_.PanStart(cursor_);
@@ -222,8 +213,6 @@ void render_star_info() {
 void render_ui() {
     TestPattern::Ui(window_width_, window_height_);
 
-    control_.Render();
-
     render_position_info();
 
     render_star_info();
@@ -264,11 +253,6 @@ void init_application() {
 
     vp_.SetWindowSize(window_width_, window_height_);
 
-    left_mouse_processor_.RegisterHandlers(
-        left_mouse_down,
-        left_mouse_up
-    );
-
     right_mouse_processor_.RegisterHandlers(
         right_mouse_down,
         right_mouse_up
@@ -284,10 +268,7 @@ void init_application() {
         wheel_up
     );
 
-    control_.SetPosition(46, window_height_ - 400);
-    control_.SetSize(478, 350);
-    control_.SetUniverse(universe_);
-    control_.SetViewport(&vp_);
+    control_.SetParameters(universe_->GetParameters());
     control_.Init();
 }
 
@@ -324,19 +305,20 @@ namespace display {
         glutPostRedisplay();
     }
 
+    void update() {
+        control_.Update();
+    }
+
     void keyboard(unsigned char key, int x, int y) {
         switch(key) {
         case 27:
             exit(0); break;
         default:
-            control_.InputRegularChar(key);
             break;
         }
     }
 
     void special(int key, int x, int y) {
-
-        control_.InputSpecialChar(key);
     }
 
     void reshape(int w, int h) {
@@ -346,8 +328,6 @@ namespace display {
     void motion(int x, int y) {
         cursor_.Set(x, y);
 
-        control_.Update(cursor_);
-
         update_selection();
 
         vp_.UpdateCursor(cursor_);
@@ -356,9 +336,6 @@ namespace display {
     void mouse(int button, int state, int x, int y) {
         // Button handling.
         switch(button) {
-        case btn_LEFT:
-            left_mouse_processor_.Process(static_cast<StateType>(state));
-            break;
         case btn_RIGHT:
             right_mouse_processor_.Process(static_cast<StateType>(state));
             break;
@@ -395,6 +372,7 @@ namespace display {
         glutReshapeFunc(reshape);
         glutMouseFunc(mouse);
         glutMotionFunc(motion);
+        glutIdleFunc(update);
         glutPassiveMotionFunc(motion);
 
         glClearColor(0.0, 0.0, 0.0, 0.0);
