@@ -313,6 +313,10 @@ namespace display {
         switch(key) {
         case 27:
             exit(0); break;
+        case 's':
+            universe_->Save(); break;
+        case 'l':
+            universe_->Load(); break;
         default:
             break;
         }

@@ -124,3 +124,11 @@ int Universe::GetCategoryIndex(double value) {
     }
     return ix;
 }
+
+void Universe::Save() {
+    m_params.Save();
+}
+
+void Universe::Load() {
+    m_params.Load();
+}

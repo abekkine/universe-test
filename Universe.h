@@ -14,6 +14,8 @@
 class Universe : public UniverseInterface {
 public:
     void GetStars(const double & centerX, const double & centerY, const double & distance, StarCollectionType & stars);
+    void Save();
+    void Load();
 
 private:
     enum ExtentIndexEnum {

@@ -127,6 +127,13 @@ struct UniverseParameters {
         }
         return result;
     }
+    void Save() {
+        rawParams.Save();
+    }
+    void Load() {
+        rawParams.Load();
+        Update();
+    }
 
 public:
     Params rawParams;
